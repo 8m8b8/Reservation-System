@@ -1,0 +1,2146 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+  <title>Ghada Tourism</title>
+  <base target="_top" />
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary-color: #008891;
+      --primary-dark: #006d75;
+      --primary-light: #00a0a9;
+      --secondary-color: #ffb3d1;
+      --accent-color: #ff69b4;
+      --text-dark: #2c3f3f;
+      --text-light: #6c757d;
+      --bg-light: #f8f9fa;
+      --shadow-light: 0 2px 10px rgba(0, 0, 0, 0.1);
+      --shadow-medium: 0 4px 15px rgba(0, 0, 0, 0.15);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      font-family: 'Cairo', sans-serif;
+    }
+
+    body {
+      background: #f8f9fa;
+      min-height: 100vh;
+    }
+
+    /* ========== تصميم شريط التنقل الاحترافي ========== */
+    .navbar {
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%) !important;
+      box-shadow: var(--shadow-medium);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .navbar-brand {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: white !important;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: var(--transition);
+    }
+
+    .navbar-brand:hover {
+      transform: scale(1.05);
+    }
+
+    .navbar-brand img {
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+      transition: var(--transition);
+    }
+
+    .navbar-brand:hover img {
+      transform: rotate(5deg);
+    }
+
+    .navbar-nav .nav-link {
+      color: rgba(255, 255, 255, 0.9) !important;
+      font-weight: 500;
+      font-size: 1rem;
+      padding: 12px 20px !important;
+      margin: 0 5px;
+      border-radius: 25px;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .navbar-nav .nav-link::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .navbar-nav .nav-link:hover::before {
+      left: 100%;
+    }
+
+    .navbar-nav .nav-link:hover,
+    .navbar-nav .nav-link.active {
+      color: white !important;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(5px);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    /* القوائم المنسدلة */
+    .dropdown-menu {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 15px;
+      box-shadow: var(--shadow-medium);
+      margin-top: 10px;
+      overflow: hidden;
+      animation: dropdownSlide 0.3s ease-out;
+    }
+
+    @keyframes dropdownSlide {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .dropdown-item {
+      color: var(--text-dark);
+      font-weight: 500;
+      padding: 12px 20px;
+      transition: var(--transition);
+      border-radius: 8px;
+      margin: 2px 5px;
+    }
+
+    .dropdown-item:hover {
+      background: linear-gradient(135deg, var(--primary-light), var(--primary-color));
+      color: white !important;
+      transform: translateX(5px);
+    }
+
+    .navbar-toggler {
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 10px;
+      padding: 8px 12px;
+      transition: var(--transition);
+    }
+
+    .navbar-toggler:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .navbar-toggler-icon {
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.8%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    }
+
+    .form-control, .form-select {
+      text-align: right;
+    }
+    
+    .btn {
+      font-family: "Cairo", sans-serif;
+    }
+    
+    p {
+      font-family: "Cairo", sans-serif;
+      font-size: 18px;
+      color: rgb(44 63 63);
+    }
+    
+    .navbar-nav {
+      padding-right: 0;
+    }
+    
+    .offset-md-1 {
+      margin-right: 8.33333%;
+      margin-left: 0;
+    }
+    
+    /* تنسيقات إضافية للبحث في القائمة المنسدلة */
+    #hotelDropdownContainer {
+      position: relative;
+    }
+    
+    #hotelSearchInput {
+      border-radius: 0.375rem;
+    }
+    
+    .dropdown-item {
+      cursor: pointer;
+      text-align: right;
+    }
+    
+    .dropdown-item:hover, .dropdown-item:focus {
+      background-color: #f8f9fa;
+    }
+    
+    .dropdown-menu {
+      padding: 0;
+    }
+    
+    .dropdown-items-container .dropdown-item.active {
+      background-color: #0d6efd;
+      color: white;
+    }
+    
+    /* تنسيقات إضافية للأطر */
+    .border.rounded {
+      border-color: #dee2e6 !important;
+    }
+    
+    .form-check {
+      margin-bottom: 0.5rem;
+    }
+    
+    .form-check-input {
+      margin-left: 0.5rem;
+    }
+    
+    /* تنسيقات نص اليورو */
+    .input-group-text {
+      background-color: #f8f9fa;
+      border: 1px solid #ced4da;
+      font-size: 12px;
+      color: #6c757d;
+    }
+    
+    /* تنسيقات جديدة للصفوف المدمجة */
+    .three-col-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 1rem;
+    }
+    
+    .three-col-row > div {
+      flex: 1;
+      min-width: 200px;
+    }
+    
+    .checkbox-container {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    
+    .checkbox-container input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      margin-left: 10px;
+    }
+    
+    .checkbox-container label {
+      margin-bottom: 0;
+    }
+    
+    /* تنسيقات الأزرار الجديدة */
+    .button-row {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    
+    .button-row .btn {
+      flex: 1;
+      max-width: 200px;
+    }
+    
+    /* محول العملات العائم */
+    #oanda_ecc {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      z-index: 1000;
+    }
+    
+    #floatingButtonContainer {
+      position: relative;
+    }
+    
+    #toggleWidgetButton {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      transition: transform 0.2s, background-color 0.2s;
+    }
+    
+    #toggleWidgetButton:hover {
+      transform: scale(1.1);
+      background-color: #0056b3;
+    }
+    
+    #floatingWidgetPanel {
+      position: absolute;
+      bottom: 60px;
+      left: 0;
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      border: 1px solid #ddd;
+      display: none;
+      width: 300px;
+    }
+    
+    /* تحسينات إضافية */
+    .loading-spinner {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 9999;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    
+    .loading-spinner.active {
+      display: block;
+    }
+    
+    .spinner-border {
+      width: 3rem;
+      height: 3rem;
+      border-width: 0.3em;
+    }
+    
+    .form-control:invalid, .form-select:invalid {
+      border-color: #dc3545;
+    }
+    
+    .form-control:valid, .form-select:valid {
+      border-color: #28a745;
+    }
+    
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    
+    /* تحسينات للبحث */
+    .hotel-loading {
+      text-align: center;
+      padding: 10px;
+      color: #6c757d;
+    }
+    
+    /* تحسينات للتواريخ */
+    .date-error {
+      border-color: #dc3545 !important;
+    }
+    
+    .error-message {
+      color: #dc3545;
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+      display: none;
+    }
+    
+    .error-message.show {
+      display: block;
+    }
+    
+    /* تحسينات للتحميل */
+    select[disabled] {
+      background-color: #e9ecef;
+      cursor: not-allowed;
+    }
+    
+    /* ========== تصميم هدية الورود الإبداعي ========== */
+    .flower-gift-card {
+      position: relative;
+      background: linear-gradient(135deg, #fff5f5 0%, #ffe5e8 50%, #fff0f5 100%);
+      border: 2px solid #ffb3d1;
+      border-radius: 20px;
+      padding: 25px 30px;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(255, 182, 193, 0.2);
+    }
+    
+    .flower-gift-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255, 182, 193, 0.1) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    
+    .flower-gift-card:hover {
+      transform: translateY(-5px) scale(1.02);
+      box-shadow: 0 8px 25px rgba(255, 105, 180, 0.3);
+      border-color: #ff69b4;
+    }
+    
+    .flower-gift-card:hover::before {
+      opacity: 1;
+    }
+    
+    .flower-gift-card.active {
+      background: linear-gradient(135deg, #ffe5e8 0%, #ffb3d1 50%, #ff91c4 100%);
+      border-color: #ff1493;
+      box-shadow: 0 8px 30px rgba(255, 20, 147, 0.4);
+      animation: flowerPulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes flowerPulse {
+      0%, 100% {
+        box-shadow: 0 8px 30px rgba(255, 20, 147, 0.4);
+      }
+      50% {
+        box-shadow: 0 8px 40px rgba(255, 20, 147, 0.6);
+      }
+    }
+    
+    .flower-gift-content {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      position: relative;
+      z-index: 2;
+    }
+    
+    .flower-icon-wrapper {
+      flex-shrink: 0;
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #ff69b4 0%, #ff1493 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba(255, 20, 147, 0.3);
+      transition: all 0.4s ease;
+      animation: flowerRotate 3s ease-in-out infinite;
+    }
+    
+    @keyframes flowerRotate {
+      0%, 100% {
+        transform: rotate(0deg) scale(1);
+      }
+      25% {
+        transform: rotate(-5deg) scale(1.05);
+      }
+      75% {
+        transform: rotate(5deg) scale(1.05);
+      }
+    }
+    
+    .flower-gift-card.active .flower-icon-wrapper {
+      animation: flowerRotate 1s ease-in-out infinite, flowerBounce 0.6s ease;
+      box-shadow: 0 6px 20px rgba(255, 20, 147, 0.5);
+    }
+    
+    @keyframes flowerBounce {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.2);
+      }
+    }
+    
+    .flower-icon {
+      width: 35px;
+      height: 35px;
+      color: white;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    }
+    
+    .flower-gift-text {
+      flex: 1;
+    }
+    
+    .flower-label {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      user-select: none;
+    }
+    
+    .flower-checkbox {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .flower-checkmark {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 28px;
+      height: 28px;
+      border: 3px solid #ff69b4;
+      border-radius: 8px;
+      background: white;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .flower-label {
+      position: relative;
+      padding-right: 40px;
+    }
+    
+    .flower-checkbox:checked ~ .flower-checkmark {
+      background: linear-gradient(135deg, #ff69b4 0%, #ff1493 100%);
+      border-color: #ff1493;
+      transform: scale(1.1);
+    }
+    
+    .flower-checkbox:checked ~ .flower-checkmark::after {
+      content: '✓';
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      animation: checkmarkAppear 0.3s ease;
+    }
+    
+    @keyframes checkmarkAppear {
+      0% {
+        transform: scale(0) rotate(-180deg);
+        opacity: 0;
+      }
+      100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+      }
+    }
+    
+    .flower-title {
+      font-size: 22px;
+      font-weight: bold;
+      color: #d63384;
+      transition: all 0.3s ease;
+      font-family: "Cairo", sans-serif;
+    }
+    
+    .flower-gift-card:hover .flower-title {
+      color: #ff1493;
+    }
+    
+    .flower-gift-card.active .flower-title {
+      color: #fff;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+    
+    .flower-subtitle {
+      font-size: 14px;
+      color: #999;
+      transition: all 0.3s ease;
+      font-family: "Cairo", sans-serif;
+    }
+    
+    .flower-gift-card.active .flower-subtitle {
+      color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .flower-particles {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+      border-radius: 20px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .flower-gift-card.active .flower-particles {
+      opacity: 1;
+    }
+    
+    .particle {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: radial-gradient(circle, #ff69b4 0%, transparent 70%);
+      border-radius: 50%;
+      animation: particleFloat 3s ease-in-out infinite;
+    }
+    
+    @keyframes particleFloat {
+      0% {
+        transform: translateY(100%) translateX(0) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-100%) translateX(20px) rotate(360deg);
+        opacity: 0;
+      }
+    }
+    
+    /* تحسينات للشاشات الصغيرة */
+    @media (max-width: 768px) {
+      .flower-gift-card {
+        padding: 20px;
+      }
+      
+      .flower-icon-wrapper {
+        width: 50px;
+        height: 50px;
+      }
+      
+      .flower-icon {
+        width: 28px;
+        height: 28px;
+      }
+      
+      .flower-title {
+        font-size: 18px;
+      }
+      
+      .flower-subtitle {
+        font-size: 12px;
+      }
+    }
+  </style>
+<base target="_blank">
+</head>
+
+<body dir="rtl">
+  <!-- شريط التنقل -->
+  <nav class="navbar navbar-expand-md bg-body navbar-dark" id="app-navbar" style="padding-bottom: 0px; margin-bottom: 20px; padding-top: 0px">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="javascript:void(0)">
+        <img src="https://i.ibb.co/179ng0p/IMG-1995.png " height="70" style="padding-left: 0px; padding-bottom: 0px; margin-bottom: 0px" loading="lazy" />
+      </a>
+      <button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-1">
+        <span class="visually-hidden">القائمة</span>
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navcol-1">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link active" href="javascript:void(0)">إضافة حجز</a>
+          </li>
+          <!-- القائمة المنسدلة "إضافة" -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="addDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              إضافة
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="addDropdown">
+              <li><a class="dropdown-item" href="javascript:void(0)" onclick="navigateTo('Add-client')">إضافة عميل</a></li>
+              <li><a class="dropdown-item" href="javascript:void(0)" onclick="navigateTo('add-tour')">إضافة رحلة</a></li>
+              <li><a class="dropdown-item" href="javascript:void(0)" onclick="navigateTo('add-hotel')">إضافة فندق</a></li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="javascript:void(0)" onclick="navigateTo('manage-reservations')">إدارة الحجوزات</a>
+          </li>
+          <!-- القائمة المنسدلة "إحصائيات" -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="statisticsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              إحصائيات
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="statisticsDropdown">
+              <li><a class="dropdown-item" href="javascript:void(0)" onclick="navigateTo('SUPPLIER')">مزودي الخدمات</a></li>
+              <li><a class="dropdown-item" href="javascript:void(0)" onclick="navigateTo('mediators')">الوسطاء</a></li>
+              <li><a class="dropdown-item" href="javascript:void(0)" onclick="navigateTo('manage-statistics')">إدارة الإحصائيات</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container-lg px-0" id="content">
+    <div>
+      <form id="registration-form">
+        <div class="form-group mb-3 bg-white">
+          <div id="formdiv" class="mx-0">
+            <!-- معلومات البائع -->
+            <div class="row pt-4">
+              <div class="col-md-12">
+                <h1 class="text-center fw-bold" style="color: rgb(0, 136, 145); font-size: 20px; line-height: 50px;">
+                  <strong><span style="background-color: rgb(255, 255, 255)">معلومات البائع</span></strong>
+                </h1>
+              </div>
+            </div>
+
+            <div class="row mx-0 px-2 py-3">
+              <div class="col-12 col-md-9 mb-3 mx-auto">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p class="mb-2"><strong>اسم البائع</strong></p>
+                        <select class="form-select" name="seller" id="sellerSelect" required></select>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="mb-2"><strong>المورد</strong></p>
+                        <select class="form-select" name="supplier" id="supplierSelect" required></select>
+                    </div>
+                  
+                </div>
+              </div>
+            </div>
+            <!-- معلومات العميل -->
+            <div class="row pt-4">
+              <div class="col-md-12">
+                <h1 class="text-center fw-bold" style="color: rgb(0, 136, 145); font-size: 20px; line-height: 50px;">
+                  <strong><span>معلومات العميل</span></strong>
+                </h1>
+              </div>
+            </div>
+
+            <div class="row mx-0 px-2 py-3">
+              <div class="col-12 col-md-9 mx-auto">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p class="mb-2"><strong>اسم العميل</strong></p>
+                        <input class="form-control mb-4" type="text" name="name" required placeholder="أدخل اسم العميل" />
+                    </div>
+                    <div class="col-md-6">
+                        <p class="mb-2"><strong>رقم الهاتف</strong></p>
+                        <input class="form-control mb-4" type="text" name="phone" placeholder="أدخل رقم الهاتف"   />
+                    </div>
+                    <div class="col-md-6">
+                        <p class="mb-2"><strong>الجنسية</strong></p>
+                        <select class="form-select mb-4" name="nationality" id="nationalitySelect" required></select>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="mb-2"><strong>عدد الأشخاص</strong></p>
+                        <select class="form-select mb-4" name="personCount" id="personSelect" required></select>
+                    </div>
+                </div>
+
+
+            
+              </div>
+            </div>
+
+            <!-- معلومات الفندق -->
+            <div class="row pt-4">
+              <div class="col-md-12">
+                <h1 class="text-center fw-bold" style="color: rgb(0, 136, 145); font-size: 20px; line-height: 50px;">
+                  <strong><span>معلومات الفندق</span></strong>
+                </h1>
+              </div>
+            </div>
+
+            <div class="row mx-0 px-2 py-3">
+              <div class="col-12 col-md-9 mx-auto gy-3">
+                <div class="row">
+                    <div class="col-md-4">
+                        <p class="mb-2"><strong>المدينة</strong></p>
+                        <select class="form-select mb-4" name="city" id="citySelect" onchange="onCityChange()" required></select>
+
+                    </div>
+                    <div class="col-md-4">
+                        <p class="mb-2"><strong>الفندق</strong></p>
+                        <div class="dropdown mb-4" id="hotelDropdownContainer">
+                          <select class="form-select" name="hotel" id="hotelSelect" required style="display: none;"></select>
+                          <button class="form-select text-start" type="button" id="hotelDropdownButton" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span id="hotelSelectedText">اختر فندق</span>
+                          </button>
+                          <div class="dropdown-menu w-100" aria-labelledby="hotelDropdownButton" id="hotelDropdownMenu">
+                            <div class="px-3 py-2 border-bottom">
+                              <input type="text" class="form-control" id="hotelSearchInput" placeholder="ابحث عن فندق..." autocomplete="off">
+                            </div>
+                            <div class="dropdown-items-container" id="hotelDropdownItems" style="max-height: 200px; overflow-y: auto;">
+                              <!-- سيتم ملء العناصر هنا ديناميكيًا -->
+                            </div>
+                          </div>
+                        </div>
+
+                    </div>
+                    <div class="col-md-4">
+
+                        <p class="mb-2"><strong>ايدي تأكيد حجز الفندق</strong></p>
+                        <input class="form-control mb-4" name="HotelConformation" type="text" required placeholder="رقم الحجز" inputmode="decimal"/>
+
+                    </div>
+                    
+                </div>
+
+
+
+                <!-- تاريخ الوصول والمغادرة في نفس الصف -->
+                <div class="row">
+                  <div class="col-md-6">
+                    <p class="mb-2"><strong>تاريخ الوصول</strong></p>
+                    <input class="form-control mb-4" type="date" name="chekInDate" id="chekInDate" required />
+                    <div class="error-message" id="checkInDateError"></div>
+                  </div>
+                  <div class="col-md-6">
+                    <p class="mb-2"><strong>تاريخ المغادرة</strong></p>
+                    <input class="form-control mb-4" type="date" name="chekOutDate" id="chekOutDate" required />
+                    <div class="error-message" id="checkOutDateError"></div>
+                  </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <p class="mb-2"><strong>عدد الغرف</strong></p>
+                        <select class="form-select mb-4" name="roomCount" id="numberSelect" required>
+                          <option value="1" selected>1</option>
+                        </select>
+                  
+                    </div>
+                    <div class="col-md-3">
+                 
+                        <p class="mb-2"><strong>نوع الغرفة</strong></p>
+                        <select class="form-select mb-4" name="roomType" id="roomSelect" required></select>
+                    </div>
+                    <div class="col-md-3">
+
+                        
+                        
+                        
+                        <p class="mb-2"><strong>نوع الإطلالة</strong></p>
+                        <select class="form-select mb-4" name="viewType" id="viewSelect" required></select>
+                       
+                    </div>
+                    <div class="col-md-3">
+
+                        <p class="mb-2"><strong>الوجبات</strong></p>
+                        <select class="form-select mb-4" name="meal" id="mealSelect" required></select>
+                       
+                    </div>
+                    
+                </div>
+
+              </div>
+            </div>
+
+            <!-- المعلومات المالية -->
+            <div class="row pt-4">
+              <div class="col-md-12">
+                <h1 class="text-center fw-bold" style="color: rgb(0, 136, 145); font-size: 20px; line-height: 50px;">
+                  <strong><span>المعلومات المالية</span></strong>
+                </h1>
+              </div>
+            </div>
+
+            <div class="row mx-0 px-2 py-3">
+              <div class="col-12 col-md-9 mx-auto">
+                <!-- سعر الفندق مع إطار -->
+                <div class="border rounded p-3 mb-4 bg-light">
+                  <p class="mb-2"><strong>سعر الفندق</strong></p>
+                  <div class="row align-items-center">
+                    <div class="col-md-8">
+                      <input class="form-control mb-3 price-input" name="hotelPrice" type="text" required placeholder="سعر الفندق" inputmode="decimal" value="0" />
+                      <div class="input-group">
+                        <span class="input-group-text" style="font-size: 12px; min-width: 100px;">القيمة باليورو</span>
+                        <input class="form-control euro-input" name="hotelEuroPrice" type="text" required inputmode="decimal" value="0" />
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="d-flex flex-wrap gap-2">
+                        <div class="form-check">
+                          <input class="form-check-input currency-radio" type="radio" name="hotelCurrency" id="hotelCurrencySAR" value="SAR" checked>
+                          <label class="form-check-label" for="hotelCurrencySAR">SAR</label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input currency-radio" type="radio" name="hotelCurrency" id="hotelCurrencyEUR" value="EUR">
+                          <label class="form-check-label" for="hotelCurrencyEUR">EUR</label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input currency-radio" type="radio" name="hotelCurrency" id="hotelCurrencyUSD" value="USD">
+                          <label class="form-check-label" for="hotelCurrencyUSD">USD</label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input currency-radio" type="radio" name="hotelCurrency" id="hotelCurrencyTRY" value="TRY">
+                          <label class="form-check-label" for="hotelCurrencyTRY">TRY</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- سعر البيع مع إطار -->
+                <div class="border rounded p-3 mb-4 bg-light">
+                  <p class="mb-2"><strong>سعر البيع</strong></p>
+                  <div class="row align-items-center">
+                    <div class="col-md-8">
+                      <input class="form-control mb-3 price-input" name="sellingPrice" type="text" required placeholder="سعر البيع" inputmode="decimal" value="0" />
+                      <div class="input-group">
+                        <span class="input-group-text" style="font-size: 12px; min-width: 100px;">القيمة باليورو</span>
+                        <input class="form-control euro-input" name="sellingEuroPrice" type="text" required inputmode="decimal" value="0" />
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="d-flex flex-wrap gap-2">
+                        <div class="form-check">
+                          <input class="form-check-input currency-radio" type="radio" name="sellingCurrency" id="sellingCurrencySAR" value="SAR" checked>
+                          <label class="form-check-label" for="sellingCurrencySAR">SAR</label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input currency-radio" type="radio" name="sellingCurrency" id="sellingCurrencyEUR" value="EUR">
+                          <label class="form-check-label" for="sellingCurrencyEUR">EUR</label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input currency-radio" type="radio" name="sellingCurrency" id="sellingCurrencyUSD" value="USD">
+                          <label class="form-check-label" for="sellingCurrencyUSD">USD</label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input currency-radio" type="radio" name="sellingCurrency" id="sellingCurrencyTRY" value="TRY">
+                          <label class="form-check-label" for="sellingCurrencyTRY">TRY</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- العربون مع إطار -->
+                <div class="border rounded p-3 mb-4 bg-light">
+                  <p class="mb-2"><strong>العربون</strong></p>
+                  <div class="row align-items-center">
+                    <div class="col-md-8">
+                      <input class="form-control mb-3 price-input" name="amountSent" required type="text" placeholder="العربون" inputmode="decimal" value="0" />
+                      <div class="input-group">
+                        <span class="input-group-text" style="font-size: 12px; min-width: 100px;">القيمة باليورو</span>
+                        <input class="form-control euro-input" name="amountEuroSent" required type="text" inputmode="decimal" value="0" />
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="d-flex flex-wrap gap-2">
+                        <div class="form-check">
+                          <input class="form-check-input currency-radio" type="radio" name="amountSentCurrency" id="amountSentCurrencySAR" value="SAR" checked>
+                          <label class="form-check-label" for="amountSentCurrencySAR">SAR</label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input currency-radio" type="radio" name="amountSentCurrency" id="amountSentCurrencyEUR" value="EUR">
+                          <label class="form-check-label" for="amountSentCurrencyEUR">EUR</label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input currency-radio" type="radio" name="amountSentCurrency" id="amountSentCurrencyUSD" value="USD">
+                          <label class="form-check-label" for="amountSentCurrencyUSD">USD</label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input currency-radio" type="radio" name="amountSentCurrency" id="amountSentCurrencyTRY" value="TRY">
+                          <label class="form-check-label" for="amountSentCurrencyTRY">TRY</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- طريقة استلام العربون داخل إطار العربون -->
+                  <div class="mt-3">
+                    <p class="mb-2"><strong>طريقة استلام العربون</strong></p>
+                    <select class="form-select" name="ra3bon" id="ra3bonSelect" required></select>
+                  </div>
+                </div>
+
+                <!-- تكاليف الإرسال مع إطار -->
+                <div class="border rounded p-3 mb-4 bg-light">
+                  <p class="mb-2"><strong>تكاليف الإرسال</strong></p>
+                  <div class="row align-items-center">
+                    <div class="col-md-8">
+                      <input class="form-control mb-3 price-input" name="arrivedAmount" type="text" placeholder="تكاليف الإرسال" inputmode="decimal" value="0" />
+                      <div class="input-group">
+                        <span class="input-group-text" style="font-size: 12px; min-width: 100px;">القيمة باليورو</span>
+                        <input class="form-control euro-input" name="arrivedEuroAmount" type="text" inputmode="decimal" value="0" />
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="d-flex flex-wrap gap-2">
+                        <div class="form-check">
+                          <input class="form-check-input currency-radio" type="radio" name="arrivedCurrency" id="arrivedCurrencySAR" value="SAR" checked>
+                          <label class="form-check-label" for="arrivedCurrencySAR">SAR</label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input currency-radio" type="radio" name="arrivedCurrency" id="arrivedCurrencyEUR" value="EUR">
+                          <label class="form-check-label" for="arrivedCurrencyEUR">EUR</label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input currency-radio" type="radio" name="arrivedCurrency" id="arrivedCurrencyUSD" value="USD">
+                          <label class="form-check-label" for="arrivedCurrencyUSD">USD</label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input currency-radio" type="radio" name="arrivedCurrency" id="arrivedCurrencyTRY" value="TRY">
+                          <label class="form-check-label" for="arrivedCurrencyTRY">TRY</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- المبلغ المتبقي مع إطار -->
+                <div class="border rounded p-3 mb-4 bg-light">
+                  <p class="mb-2"><strong>المبلغ المتبقي</strong></p>
+                  <div class="row align-items-center">
+                    <div class="col-md-8">
+                      <input class="form-control mb-3 price-input" name="remainingAmount" type="text" placeholder="المبلغ المتبقي" inputmode="decimal" value="0" />
+                      <div class="input-group">
+                        <span class="input-group-text" style="font-size: 12px; min-width: 100px;">القيمة باليورو</span>
+                        <input class="form-control euro-input" name="remainingEuroAmount" type="text" inputmode="decimal" value="0" />
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="d-flex flex-wrap gap-2">
+                        <div class="form-check">
+                          <input class="form-check-input currency-radio" type="radio" name="amountRemainingCurrency" id="amountRemainingCurrencySAR" value="SAR" checked>
+                          <label class="form-check-label" for="amountRemainingCurrencySAR">SAR</label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input currency-radio" type="radio" name="amountRemainingCurrency" id="amountRemainingCurrencyEUR" value="EUR">
+                          <label class="form-check-label" for="amountRemainingCurrencyEUR">EUR</label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input currency-radio" type="radio" name="amountRemainingCurrency" id="amountRemainingCurrencyUSD" value="USD">
+                          <label class="form-check-label" for="amountRemainingCurrencyUSD">USD</label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input currency-radio" type="radio" name="amountRemainingCurrency" id="amountRemainingCurrencyTRY" value="TRY">
+                          <label class="form-check-label" for="amountRemainingCurrencyTRY">TRY</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- طريقة التحصيل داخل إطار المبلغ المتبقي -->
+                  <div class="mt-3">
+                    <p class="mb-2"><strong>طريقة التحصيل</strong></p>
+                    <select class="form-select" name="collectionMethod" id="collectionSelect" required></select>
+                  </div>
+                </div>
+
+                <!-- الضريبة وعمولة الفندق ونسبة العمولة في نفس الصف -->
+                <div class="three-col-row">
+                  <div>
+                    <p class="mb-2"><strong>الضريبة</strong></p>
+                    <select class="form-select" name="kdv" id="kdvSelect" required>
+                      <option value="لا يوجد" selected>لا يوجد</option>
+                    </select>
+                  </div>
+                  <div>
+                    <p class="mb-2"><strong>عمولة الفندق</strong></p>
+                    <input class="form-control price-input" name="hotelComm" type="text" placeholder="أدخل عمولة الفندق" inputmode="decimal" value="0" />
+                  </div>
+                  <div>
+                    <p class="mb-2"><strong>نسبة عمولة الفندق %</strong></p>
+                    <input class="form-control price-input" name="hotelCommPrc" type="text" placeholder="أدخل عمولة الفندق %" inputmode="decimal" value="0" />
+                  </div>
+                </div>
+
+                <p class="mb-2"><strong>حالة الحجز</strong></p>
+                <select class="form-select mb-4" name="reservationState" id="reservationSelect" required></select>
+
+                <p class="mb-2"><strong>ملاحظات</strong></p>
+                <textarea class="form-control mb-4" style="font-size: 14px" placeholder="أدخل ملاحظاتك هنا" name="note"></textarea>
+              </div>
+            </div>
+
+            <!-- هدية الورود كمربع اختيار -->
+            <div class="row justify-content-center align-items-center py-4">
+              <div class="col-12 col-md-8">
+                <div class="flower-gift-card" id="flowerGiftCard">
+                  <div class="flower-gift-content">
+                    <div class="flower-icon-wrapper">
+                      <svg class="flower-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg ">
+                        <!-- بتلات الوردة -->
+                        <path d="M12 3C11 3 10 3.5 9.5 4.5C9 5.5 9.5 6.5 10.5 7C11.5 7.5 12.5 7.5 13.5 7C14.5 6.5 15 5.5 14.5 4.5C14 3.5 13 3 12 3Z" fill="currentColor" opacity="0.9"/>
+                        <path d="M8 7C7 7 6 7.5 5.5 8.5C5 9.5 5.5 10.5 6.5 11C7.5 11.5 8.5 11.5 9.5 11C10.5 10.5 11 9.5 10.5 8.5C10 7.5 9 7 8 7Z" fill="currentColor" opacity="0.8"/>
+                        <path d="M16 7C15 7 14 7.5 13.5 8.5C13 9.5 13.5 10.5 14.5 11C15.5 11.5 16.5 11.5 17.5 11C18.5 10.5 19 9.5 18.5 8.5C18 7.5 17 7 16 7Z" fill="currentColor" opacity="0.8"/>
+                        <path d="M12 9C11 9 10 9.5 9.5 10.5C9 11.5 9.5 12.5 10.5 13C11.5 13.5 12.5 13.5 13.5 13C14.5 12.5 15 11.5 14.5 10.5C14 9.5 13 9 12 9Z" fill="currentColor" opacity="0.85"/>
+                        <!-- مركز الوردة -->
+                        <circle cx="12" cy="11" r="2.5" fill="currentColor" opacity="0.7"/>
+                        <circle cx="12" cy="11" r="1.5" fill="#FFD700"/>
+                        <!-- الساق -->
+                        <rect x="11.5" y="13.5" width="1" height="4.5" fill="#228B22" opacity="0.6" rx="0.5"/>
+                        <path d="M11 18L12 19L13 18Z" fill="#228B22" opacity="0.6"/>
+                      </svg>
+                    </div>
+                    <div class="flower-gift-text">
+                      <label for="flowerCheckbox" class="flower-label">
+                        <input type="checkbox" id="flowerCheckbox" name="freeFlower" value="نعم" class="flower-checkbox">
+                        <span class="flower-checkmark"></span>
+                        <span class="flower-title">هدية الورود</span>
+                        <span class="flower-subtitle"></span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="flower-particles" id="flowerParticles"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- معلومات الوسيط -->
+            <div class="row pt-4">
+              <div class="col-md-12">
+                <h1 class="text-center fw-bold" style="color: rgb(0, 136, 145); font-size: 20px; line-height: 50px;">
+                  <strong><span>معلومات الوسيط</span></strong>
+                </h1>
+              </div>
+            </div>
+            <div class="row mx-0 px-2 py-3">
+              <div class="col-12 col-md-9 mx-auto">
+                <div class="row">
+
+                    <div class="col-md-6">
+                        <p class="mb-2"><strong>اسم الوسيط</strong></p>
+                        <select class="form-select mb-4" name="mediator" id="mediatorSelect"></select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <p class="mb-2"><strong>العمولة</strong></p>
+                        <input class="form-control mb-4 price-input" name="commission" type="text" placeholder="أدخل قيمة العمولة" inputmode="decimal" value="0" />
+                    </div>
+              
+                </div>
+            </div>
+            
+            <!-- أزرار التحكم -->
+            <div class="row d-flex justify-content-center" style="margin-right: 0px; margin-left: 0px; padding-top: 24px">
+              <div class="col-12">
+                <div class="button-row">
+                  <button class="btn btn-danger btn-lg" id="reset" type="reset">
+                    مسح
+                  </button>
+                  <button class="btn btn-primary btn-lg" id="submit" type="submit">
+                    حفظ
+                  </button>
+                  <button class="btn btn-success btn-lg" id="submitAndSend" type="button">
+                    حفظ وارسال
+                  </button>
+                </div>
+              </div>
+            </div>
+            <?var url = getUrl();?>
+            <input type="hidden" value="<?= url ?>" id="url" />
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- محول العملات -->
+  <div id="oanda_ecc">
+    <div id="floatingButtonContainer">
+      <button id="toggleWidgetButton">💱</button>
+      <div id="floatingWidgetPanel">
+        <script>
+          var fm = "SAR";
+          var to = "EUR";
+          var tz = "3";
+          var sz = "1x1";
+          var lg = "ar";
+          var st = "success";
+          var lr = "1";
+          var rd = "0";
+        </script>
+        <script src="//currencyrate.today/converter"></script>
+        <div style="text-align: right">
+          <a href="https://currencyrate.today ">محول العملات</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div id="loadingSpinner" class="loading-spinner">
+    <div class="spinner-border text-primary" role="status">
+    </div>
+  </div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js " integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+<script>
+  // ========== Configuration ==========
+  const selectList = [
+    {
+      selectId: "sellerSelect",
+      columnName: "SELLERS",
+      placeholder: "اسم البائع",
+    },
+    {
+      selectId: "supplierSelect",
+      columnName: "HOTEL SUPPLIER",
+      placeholder: "المزود",
+    },
+    {
+      selectId: "nationalitySelect",
+      columnName: "NATIONALITY",
+      placeholder: "جنسية العميل",
+    },
+    {
+      selectId: "personSelect",
+      columnName: "PERSONS",
+      placeholder: "عدد الاشخاص",
+    },
+    {
+      selectId: "roomSelect",
+      columnName: "ROOM TYPE",
+      placeholder: "نوع الغرفة",
+    },
+    {
+      selectId: "viewSelect",
+      columnName: "VIEW TYPE",
+      placeholder: "الاطلالة",
+    },
+    {
+      selectId: "mealSelect",
+      columnName: "MEALS",
+      placeholder: "نوع الوجبات",
+    },
+    {
+      selectId: "ra3bonSelect",
+      columnName: "RA3BON",
+      placeholder: "طريقة تحصيل العربون",
+    },
+    {selectId: "kdvSelect", columnName: "KDV", placeholder: "الضريبة" },
+    {
+      selectId: "reservationSelect",
+      columnName: "RESERVATION STATE",
+      placeholder: "حالة الحجز",
+    },
+    {
+      selectId: "collectionSelect",
+      columnName: "COLLECTION METHOD",
+      placeholder: "طريقة التحصيل",
+    },
+    {
+      selectId: "mediatorSelect",
+      columnName: "MEDIATOR",
+      placeholder: "اسم الوسيط",
+    }
+  ];
+  
+  // ========== Global Variables ==========
+  let allHotels = [];
+  let filteredHotels = [];
+  let searchTimeout = null;
+  
+  // ========== Utility Functions ==========
+  
+  // دالة لعرض/إخفاء spinner التحميل
+  function showLoading(show = true) {
+    const spinner = document.getElementById('loadingSpinner');
+    if (spinner) {
+      if (show) {
+        spinner.classList.add('active');
+      } else {
+        spinner.classList.remove('active');
+      }
+    }
+  }
+  
+  // دالة لتأخير التنفيذ (debounce)
+  function debounce(func, wait) {
+    return function executedFunction(...args) {
+      const later = () => {
+        clearTimeout(searchTimeout);
+        func(...args);
+      };
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(later, wait);
+    };
+  }
+  
+  // دالة لإنشاء option element
+  function createOption(value, text, selected = false, disabled = false) {
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = text;
+    if (selected) option.selected = true;
+    if (disabled) option.disabled = true;
+    return option;
+  }
+  
+  // دالة لملء select element بالخيارات
+  function populateSelect(selectElement, options, placeholder, defaultValue = null) {
+    const fragment = document.createDocumentFragment();
+    
+    // إضافة placeholder
+    if (placeholder) {
+      fragment.appendChild(createOption("", placeholder, !defaultValue, true));
+    }
+    
+    // إضافة الخيارات
+    options.forEach(item => {
+      const option = createOption(item, item, defaultValue === item);
+      fragment.appendChild(option);
+    });
+    
+    selectElement.innerHTML = "";
+    selectElement.appendChild(fragment);
+  }
+  
+  // ========== Widget Functions ==========
+  
+  function initWidgetToggle() {
+    const toggleButton = document.getElementById("toggleWidgetButton");
+    const widgetPanel = document.getElementById("floatingWidgetPanel");
+    
+    if (toggleButton && widgetPanel) {
+      toggleButton.addEventListener("click", function () {
+        const isHidden = widgetPanel.style.display === "none" || widgetPanel.style.display === "";
+        widgetPanel.style.display = isHidden ? "block" : "none";
+      });
+      
+      // إغلاق عند النقر خارجها
+      document.addEventListener("click", function (event) {
+        if (
+          !widgetPanel.contains(event.target) &&
+          !toggleButton.contains(event.target)
+        ) {
+          widgetPanel.style.display = "none";
+        }
+      });
+    }
+  }
+  
+  // ========== City Functions ==========
+  
+  function populateCities() {
+    showLoading(true);
+    google.script.run
+      .withSuccessHandler(function (cities) {
+        const citySelect = document.getElementById("citySelect");
+        if (citySelect && cities) {
+          populateSelect(citySelect, cities, "اسم المدينة");
+        }
+        showLoading(false);
+      })
+      .withFailureHandler(function(error) {
+        console.error("Error loading cities:", error);
+        showLoading(false);
+        Swal.fire({
+          title: "خطأ",
+          text: "فشل تحميل المدن. يرجى المحاولة مرة أخرى.",
+          icon: "error",
+          confirmButtonText: "حسناً"
+        });
+      })
+      .getCities();
+  }
+
+  // ========== Column Functions ==========
+  
+  async function getColumns() {
+    showLoading(true);
+    try {
+      populateCities();
+      generateRoomCount();
+      
+      // استخدام Promise.all لتحميل جميع الأعمدة بشكل متوازي
+      const columnPromises = selectList.map(
+        ({ selectId, columnName, placeholder }) =>
+          getColumn(selectId, columnName, placeholder)
+      );
+      
+      await Promise.all(columnPromises);
+      showLoading(false);
+    } catch (error) {
+      console.error("Error loading columns:", error);
+      showLoading(false);
+    }
+  }
+  
+  function getColumn(selectId, columnName, placeholder) {
+    return new Promise((resolve, reject) => {
+      google.script.run
+        .withSuccessHandler(function (column) {
+          const selectElement = document.getElementById(selectId);
+          if (selectElement) {
+            populateSelect(selectElement, column || [], placeholder);
+            
+            // إذا كان هذا هو حقل الضريبة، تأكد من أن "لا يوجد" هو الخيار الافتراضي
+            if (selectId === "kdvSelect") {
+              const noTaxOption = createOption("لا يوجد", "لا يوجد", true);
+              selectElement.insertBefore(noTaxOption, selectElement.firstChild);
+            }
+          }
+          resolve();
+        })
+        .withFailureHandler(function(error) {
+          console.error(`Error loading ${columnName}:`, error);
+          resolve(); // نستمر حتى لو فشل عمود واحد
+        })
+        .getColumnByName(columnName);
+    });
+  }
+  
+  function clearColumn(selectId, columnName, placeholder) {
+    const selectElement = document.getElementById(selectId);
+    if (selectElement) {
+      populateSelect(selectElement, [], placeholder);
+    }
+  }
+  
+  // ========== Hotel Functions ==========
+  
+  function onCityChange() {
+    const citySelect = document.getElementById("citySelect");
+    const city = citySelect ? citySelect.value : "";
+    
+    if (!city) {
+      resetHotelDropdown();
+      return;
+    }
+    
+    showLoading(true);
+    const hotelDropdownItems = document.getElementById("hotelDropdownItems");
+    if (hotelDropdownItems) {
+      hotelDropdownItems.innerHTML = '<div class="hotel-loading">جاري التحميل...</div>';
+    }
+    
+    google.script.run
+      .withSuccessHandler(updateHotelDropdown)
+      .withFailureHandler(function(error) {
+        console.error("Error loading hotels:", error);
+        showLoading(false);
+        const hotelDropdownItems = document.getElementById("hotelDropdownItems");
+        if (hotelDropdownItems) {
+          hotelDropdownItems.innerHTML = '<div class="hotel-loading text-danger">فشل تحميل الفنادق</div>';
+        }
+        Swal.fire({
+          title: "خطأ",
+          text: "فشل تحميل الفنادق. يرجى المحاولة مرة أخرى.",
+          icon: "error",
+          confirmButtonText: "حسناً"
+        });
+      })
+      .getHotelsByCity(city);
+  }
+
+  // ========== Room Count Functions ==========
+  
+  function generateRoomCount() {
+    const select = document.getElementById("numberSelect");
+    if (!select) return;
+    
+    const options = Array.from({ length: 30 }, (_, i) => i + 1);
+    populateSelect(select, options.map(String), null, "1");
+  }
+  
+  // ========== Hotel Dropdown Functions ==========
+  
+  function updateHotelDropdown(hotels) {
+    showLoading(false);
+    allHotels = hotels || [];
+    filteredHotels = [...allHotels];
+    
+    const hotelSelect = document.getElementById("hotelSelect");
+    if (!hotelSelect) return;
+    
+    if (allHotels.length > 0) {
+      const options = allHotels.map(hotel => hotel);
+      populateSelect(hotelSelect, options, null);
+      populateCustomHotelDropdown();
+    } else {
+      hotelSelect.innerHTML = "";
+      hotelSelect.appendChild(createOption("", "قم باختيار المدينة اولا", false, true));
+      populateCustomHotelDropdown();
+    }
+  }
+  
+  function populateCustomHotelDropdown() {
+    const dropdownItems = document.getElementById("hotelDropdownItems");
+    if (!dropdownItems) return;
+    
+    dropdownItems.innerHTML = "";
+    const fragment = document.createDocumentFragment();
+    
+    if (filteredHotels.length > 0) {
+      filteredHotels.forEach(hotel => {
+        const item = document.createElement("a");
+        item.className = "dropdown-item";
+        item.href = "#";
+        item.textContent = hotel;
+        item.dataset.value = hotel;
+        item.addEventListener("click", function(e) {
+          e.preventDefault();
+          selectHotel(hotel);
+        });
+        fragment.appendChild(item);
+      });
+    } else {
+      const item = document.createElement("a");
+      item.className = "dropdown-item text-muted";
+      item.href = "#";
+      item.textContent = "لا توجد نتائج";
+      item.style.pointerEvents = "none";
+      fragment.appendChild(item);
+    }
+    
+    dropdownItems.appendChild(fragment);
+  }
+  
+  function selectHotel(hotel) {
+    const hotelSelect = document.getElementById("hotelSelect");
+    const hotelSelectedText = document.getElementById("hotelSelectedText");
+    const searchInput = document.getElementById("hotelSearchInput");
+    
+    if (hotelSelect) hotelSelect.value = hotel;
+    if (hotelSelectedText) hotelSelectedText.textContent = hotel;
+    if (searchInput) {
+      searchInput.value = "";
+      filteredHotels = [...allHotels];
+      populateCustomHotelDropdown();
+    }
+  }
+  
+  function resetHotelDropdown() {
+    const hotelSelect = document.getElementById("hotelSelect");
+    const hotelSelectedText = document.getElementById("hotelSelectedText");
+    const searchInput = document.getElementById("hotelSearchInput");
+    
+    if (hotelSelect) hotelSelect.value = "";
+    if (hotelSelectedText) hotelSelectedText.textContent = "اختر فندق";
+    if (searchInput) {
+      searchInput.value = "";
+      filteredHotels = [];
+      allHotels = [];
+      populateCustomHotelDropdown();
+    }
+  }
+  
+  function initHotelSearch() {
+    const searchInput = document.getElementById("hotelSearchInput");
+    const dropdownButton = document.getElementById("hotelDropdownButton");
+    
+    if (!searchInput) return;
+    
+    // استخدام debounce لتحسين الأداء
+    const debouncedSearch = debounce(function() {
+      const searchTerm = searchInput.value.toLowerCase().trim();
+      
+      if (searchTerm === "") {
+        filteredHotels = [...allHotels];
+      } else {
+        filteredHotels = allHotels.filter(hotel => 
+          hotel.toLowerCase().includes(searchTerm)
+        );
+      }
+      
+      populateCustomHotelDropdown();
+    }, 300);
+    
+    searchInput.addEventListener("input", debouncedSearch);
+    
+    if (dropdownButton) {
+      dropdownButton.addEventListener("click", function() {
+        searchInput.value = "";
+        filteredHotels = [...allHotels];
+        populateCustomHotelDropdown();
+        searchInput.focus();
+      });
+    }
+  }
+  
+  // ========== Date Validation Functions ==========
+  
+  function validateDates() {
+    const checkInDate = document.getElementById("chekInDate");
+    const checkOutDate = document.getElementById("chekOutDate");
+    const checkInError = document.getElementById("checkInDateError");
+    const checkOutError = document.getElementById("checkOutDateError");
+    
+    if (!checkInDate || !checkOutDate) return true;
+    
+    const checkIn = new Date(checkInDate.value);
+    const checkOut = new Date(checkOutDate.value);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    let isValid = true;
+    
+    // التحقق من تاريخ الوصول
+    if (checkInDate.value && checkIn < today) {
+      if (checkInError) {
+        checkInError.textContent = "تاريخ الوصول يجب أن يكون اليوم أو بعده";
+        checkInError.classList.add("show");
+        checkInDate.classList.add("date-error");
+      }
+      isValid = false;
+    } else {
+      if (checkInError) {
+        checkInError.classList.remove("show");
+        checkInDate.classList.remove("date-error");
+      }
+    }
+    
+    // التحقق من تاريخ المغادرة
+    if (checkOutDate.value && checkInDate.value) {
+      if (checkOut <= checkIn) {
+        if (checkOutError) {
+          checkOutError.textContent = "تاريخ المغادرة يجب أن يكون بعد تاريخ الوصول";
+          checkOutError.classList.add("show");
+          checkOutDate.classList.add("date-error");
+        }
+        isValid = false;
+      } else {
+        if (checkOutError) {
+          checkOutError.classList.remove("show");
+          checkOutDate.classList.remove("date-error");
+        }
+      }
+    }
+    
+    return isValid;
+  }
+  
+  function initDateValidation() {
+    const checkInDate = document.getElementById("chekInDate");
+    const checkOutDate = document.getElementById("chekOutDate");
+    
+    if (checkInDate) {
+      checkInDate.addEventListener("change", validateDates);
+    }
+    
+    if (checkOutDate) {
+      checkOutDate.addEventListener("change", validateDates);
+    }
+    
+    // تعيين الحد الأدنى للتواريخ
+    const today = new Date().toISOString().split('T')[0];
+    if (checkInDate) checkInDate.setAttribute("min", today);
+    if (checkOutDate) checkOutDate.setAttribute("min", today);
+  }
+
+  // ========== Currency Functions ==========
+  
+  function setupCurrencyAutoFill() {
+    // إضافة مستمعات الأحداث لمربعات اختيار العملة
+    const currencyRadios = document.querySelectorAll('.currency-radio');
+    currencyRadios.forEach(radio => {
+      radio.addEventListener('change', function() {
+        const parentContainer = this.closest('.border.rounded');
+        
+        if (parentContainer && this.value === 'EUR') {
+          const priceInput = parentContainer.querySelector('.price-input');
+          const euroInput = parentContainer.querySelector('.euro-input');
+          
+          if (priceInput && euroInput && priceInput.value) {
+            euroInput.value = priceInput.value;
+          }
+        }
+      });
+    });
+    
+    // إضافة مستمعات الأحداث لحقول الإدخال الرئيسية
+    const priceInputs = document.querySelectorAll('.price-input');
+    priceInputs.forEach(input => {
+      input.addEventListener('input', function() {
+        const parentContainer = this.closest('.border.rounded');
+        if (parentContainer) {
+          const currencyRadio = parentContainer.querySelector('input[type="radio"]:checked');
+          const euroInput = parentContainer.querySelector('.euro-input');
+          
+          if (currencyRadio && currencyRadio.value === 'EUR' && euroInput) {
+            euroInput.value = this.value || '0';
+          }
+        }
+      });
+    });
+  }
+
+  function setDefaultFinancialValues() {
+    const priceInputs = document.querySelectorAll('.price-input');
+    priceInputs.forEach(input => {
+      if (!input.value || input.value.trim() === '') {
+        input.value = '0';
+      }
+    });
+    
+    const euroInputs = document.querySelectorAll('.euro-input');
+    euroInputs.forEach(input => {
+      if (!input.value || input.value.trim() === '') {
+        input.value = '0';
+      }
+    });
+  }
+  
+  // ========== Form Reset Functions ==========
+
+  async function clearAllFields() {
+    const form = document.getElementById('registration-form');
+    if (form) form.reset();
+    
+    // إعادة تعيين القيم الافتراضية
+    const citySelect = document.getElementById('citySelect');
+    const numberSelect = document.getElementById('numberSelect');
+    const kdvSelect = document.getElementById('kdvSelect');
+    const flowerCheckbox = document.getElementById('flowerCheckbox');
+    const checkInDate = document.querySelector('input[name="chekInDate"]');
+    const checkOutDate = document.querySelector('input[name="chekOutDate"]');
+    
+    if (citySelect) citySelect.value = '';
+    if (numberSelect) numberSelect.value = '1';
+    if (kdvSelect) kdvSelect.value = 'لا يوجد';
+    if (flowerCheckbox) {
+      flowerCheckbox.checked = false;
+      // تحديث حالة كارد الورود
+      const flowerGiftCard = document.getElementById('flowerGiftCard');
+      if (flowerGiftCard) {
+        flowerGiftCard.classList.remove('active');
+      }
+    }
+    
+    // إعادة تعيين القائمة المنسدلة للفنادق
+    resetHotelDropdown();
+    
+    // إعادة تعيين القيم المالية
+    setDefaultFinancialValues();
+    
+    // إعادة تعيين أزرار الراديو للعملة
+    const currencyRadios = document.querySelectorAll('.currency-radio');
+    currencyRadios.forEach(radio => {
+      radio.checked = (radio.value === 'SAR');
+    });
+    
+    // إعادة تعيين التواريخ
+    const today = new Date().toISOString().split('T')[0];
+    if (checkInDate) {
+      checkInDate.value = today;
+      checkInDate.dispatchEvent(new Event('change'));
+    }
+    if (checkOutDate) {
+      checkOutDate.value = today;
+      checkOutDate.dispatchEvent(new Event('change'));
+    }
+    
+    // إعادة تعيين رسائل الخطأ
+    const errorMessages = document.querySelectorAll('.error-message');
+    errorMessages.forEach(msg => msg.classList.remove('show'));
+    
+    const dateInputs = document.querySelectorAll('.date-error');
+    dateInputs.forEach(input => input.classList.remove('date-error'));
+    
+    // إعادة تحميل القوائم المنسدلة
+    await getColumns();
+  }
+
+  // ========== Form Data Preparation Functions ==========
+  
+  function prepareFormData(action = 'save') {
+    const form = document.getElementById("registration-form");
+    if (!form) return { data: {}, valuesArray: [] };
+    
+    const formData = new FormData(form);
+    const data = {};
+    
+    // جمع البيانات من جميع الحقول
+    formData.forEach((value, key) => {
+      data[key] = value || '';
+    });
+    
+    // معالجة الحقول الفارغة
+    const allSelects = document.querySelectorAll('select[name]');
+    allSelects.forEach(select => {
+      if (select.name && (!data[select.name] || data[select.name] === '')) {
+        data[select.name] = ' ';
+      }
+    });
+    
+    const allInputs = document.querySelectorAll('input[type="text"][name], input[type="date"][name], textarea[name]');
+    allInputs.forEach(input => {
+      if (input.name && (!data[input.name] || data[input.name] === '')) {
+        data[input.name] = '0';
+      }
+    });
+    
+    // معالجة أزرار الراديو
+    const allRadios = document.querySelectorAll('input[type="radio"]');
+    const radioGroups = new Set();
+    allRadios.forEach(radio => {
+      radioGroups.add(radio.name);
+      if (radio.checked) {
+        data[radio.name] = radio.value;
+      }
+    });
+    
+    // تعيين القيمة الافتراضية لأزرار الراديو غير المحددة
+    radioGroups.forEach(groupName => {
+      if (!data[groupName]) {
+        data[groupName] = 'SAR'; // العملة الافتراضية
+      }
+    });
+    
+    // معالجة checkbox الورود
+    const flowerCheckbox = document.getElementById('flowerCheckbox');
+    if (flowerCheckbox && !flowerCheckbox.checked) {
+      data['freeFlower'] = 'لا';
+    }
+    
+    data.action = action;
+    
+    // ترتيب الحقول المطلوب
+    const fieldOrder = [
+      'seller', 'supplier', 'name', 'phone', 'nationality', 'personCount',
+      'city', 'hotel', 'HotelConformation', 'chekInDate', 'chekOutDate', 'roomCount', 'roomType', 
+      'viewType', 'meal', 'hotelPrice', 'hotelEuroPrice', 'hotelCurrency', 'sellingPrice', 
+      'sellingEuroPrice', 'sellingCurrency', 'kdv', 'hotelComm', 'hotelCommPrc',
+      'amountSent', 'amountEuroSent', 'amountSentCurrency', 'ra3bon', 'arrivedAmount', 
+      'arrivedEuroAmount', 'arrivedCurrency', 'remainingAmount', 'remainingEuroAmount', 
+      'amountRemainingCurrency', 'reservationState', 'collectionMethod', 'note',
+      'freeFlower', 'mediator', 'commission'
+    ];
+
+    const valuesArray = fieldOrder.map(field => data[field] || '0');
+    
+    return { data, valuesArray };
+  }
+  
+  // ========== Form Submission Functions ==========
+  
+  function submitData(action) {
+    // التحقق من صحة التواريخ
+    if (!validateDates()) {
+      Swal.fire({
+        title: "خطأ في التواريخ",
+        text: "يرجى التحقق من صحة التواريخ المدخلة",
+        icon: "error",
+        confirmButtonText: "حسناً"
+      });
+      return;
+    }
+    
+    // التحقق من صحة النموذج
+    const form = document.getElementById("registration-form");
+    if (!form || !form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+    
+    const { data, valuesArray } = prepareFormData(action);
+    
+    // إذا كان الإجراء هو حفظ وإرسال، نطلب البريد الإلكتروني
+    if (action === 'saveAndSend') {
+      // إنشاء مربع حوار لإدخال البريد الإلكتروني
+      Swal.fire({
+        title: 'إرسال البريد الإلكتروني',
+        html: `
+          <div style="text-align: right; direction: rtl;">
+            <label for="emailInput" style="display: block; margin-bottom: 10px; font-weight: bold;">البريد الإلكتروني للإرسال:</label>
+            <input type="email" id="emailInput" class="form-control" placeholder="أدخل البريد الإلكتروني" style="text-align: right;">
+            <label for="emailNote" style="display: block; margin-top: 15px; margin-bottom: 10px; font-weight: bold;">ملاحظات إضافية:</label>
+            <textarea id="emailNote" class="form-control" rows="3" placeholder="أدخل ملاحظاتك للبريد الإلكتروني" style="text-align: right; resize: vertical;"></textarea>
+          </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'إرسال',
+        cancelButtonText: 'إلغاء',
+        confirmButtonColor: '#28a745',
+        cancelButtonColor: '#6c757d',
+        preConfirm: () => {
+          const email = document.getElementById('emailInput').value;
+          const note = document.getElementById('emailNote').value;
+          
+          if (!email) {
+            Swal.showValidationMessage('يرجى إدخال البريد الإلكتروني');
+            return false;
+          }
+          
+          if (!isValidEmail(email)) {
+            Swal.showValidationMessage('يرجى إدخال بريد إلكتروني صحيح');
+            return false;
+          }
+          
+          return { email, note };
+        }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // إضافة البريد الإلكتروني والملاحظات إلى البيانات
+          data.emailToSend = result.value.email;
+          data.emailNote = result.value.note;
+          valuesArray.push(result.value.email, result.value.note);
+          
+          // إرسال البيانات
+          sendDataToServer(data, valuesArray, action);
+        }
+      });
+    } else {
+      // إرسال البيانات مباشرة للحفظ
+      sendDataToServer(data, valuesArray, action);
+    }
+  }
+  
+  function sendDataToServer(data, valuesArray, action) {
+    // تعطيل الأزرار أثناء الإرسال
+    const submitButton = document.getElementById('submit');
+    const submitAndSendButton = document.getElementById('submitAndSend');
+    const resetButton = document.getElementById('reset');
+    
+    if (submitButton) submitButton.disabled = true;
+    if (submitAndSendButton) submitAndSendButton.disabled = true;
+    if (resetButton) resetButton.disabled = true;
+    
+    showLoading(true);
+    
+    google.script.run
+      .withSuccessHandler(function (response) {
+        showLoading(false);
+        
+        // إعادة تفعيل الأزرار
+        if (submitButton) submitButton.disabled = false;
+        if (submitAndSendButton) submitAndSendButton.disabled = false;
+        if (resetButton) resetButton.disabled = false;
+        
+        const successMessage = action === 'saveAndSend' 
+          ? "تمت إضافة الحجز بنجاح وتم إرسال البريد الإلكتروني"
+          : "تمت إضافة الحجز بنجاح";
+        
+        Swal.fire({
+          title: "تم الإرسال بنجاح",
+          text: successMessage,
+          icon: "success",
+          heightAuto: false,
+          showConfirmButton: false,
+          timer: 2000,
+        }).then(() => {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+          clearAllFields();
+        });
+      })
+      .withFailureHandler(function(error) {
+        showLoading(false);
+        
+        // إعادة تفعيل الأزرار
+        if (submitButton) submitButton.disabled = false;
+        if (submitAndSendButton) submitAndSendButton.disabled = false;
+        if (resetButton) resetButton.disabled = false;
+        
+        console.error("Submission error:", error);
+        Swal.fire({
+          title: "خطأ",
+          text: "حدث خطأ أثناء حفظ البيانات: " + (error.message || error),
+          icon: "error",
+          confirmButtonText: "حسناً"
+        });
+      })
+      .record_data(valuesArray, "<?= userEmail ?>", action);
+  }
+  
+  // ========== Flower Gift Functions ==========
+  
+  function initFlowerGift() {
+    const flowerCheckbox = document.getElementById('flowerCheckbox');
+    const flowerGiftCard = document.getElementById('flowerGiftCard');
+    const flowerParticles = document.getElementById('flowerParticles');
+    
+    if (!flowerCheckbox || !flowerGiftCard) return;
+    
+    // تحديث حالة الكارد عند تغيير checkbox
+    function updateFlowerCardState() {
+      if (flowerCheckbox.checked) {
+        flowerGiftCard.classList.add('active');
+        createFlowerParticles();
+      } else {
+        flowerGiftCard.classList.remove('active');
+        clearFlowerParticles();
+      }
+    }
+    
+    // إنشاء الجزيئات عند التحديد
+    function createFlowerParticles() {
+      if (!flowerParticles) return;
+      
+      clearFlowerParticles();
+      
+      // إنشاء 15 جزيء عشوائي
+      for (let i = 0; i < 15; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        
+        // موضع عشوائي
+        const startX = Math.random() * 100;
+        const delay = Math.random() * 2;
+        const duration = 2 + Math.random() * 2;
+        
+        particle.style.left = startX + '%';
+        particle.style.animationDelay = delay + 's';
+        particle.style.animationDuration = duration + 's';
+        
+        // حجم عشوائي
+        const size = 6 + Math.random() * 4;
+        particle.style.width = size + 'px';
+        particle.style.height = size + 'px';
+        
+        flowerParticles.appendChild(particle);
+      }
+    }
+    
+    // مسح الجزيئات
+    function clearFlowerParticles() {
+      if (flowerParticles) {
+        flowerParticles.innerHTML = '';
+      }
+    }
+    
+    // إضافة مستمعات الأحداث
+    flowerCheckbox.addEventListener('change', function() {
+      updateFlowerCardState();
+    });
+    
+    // إضافة تأثير النقر على الكارد
+    flowerGiftCard.addEventListener('click', function(e) {
+      // تجنب toggle إذا تم النقر مباشرة على checkbox أو checkmark
+      if (e.target === flowerCheckbox || e.target.closest('.flower-checkmark')) {
+        return;
+      }
+      // toggle checkbox عند النقر على أي مكان آخر في الكارد
+      e.preventDefault();
+      flowerCheckbox.checked = !flowerCheckbox.checked;
+      // تشغيل event change يدوياً
+      flowerCheckbox.dispatchEvent(new Event('change'));
+    });
+    
+    // تحديث الحالة الأولية
+    updateFlowerCardState();
+    
+    // إضافة تأثير hover إضافي
+    flowerGiftCard.addEventListener('mouseenter', function() {
+      if (flowerCheckbox.checked) {
+        // تأثير إضافي عند hover على الكارد المحدد
+        flowerGiftCard.style.transform = 'translateY(-8px) scale(1.03)';
+      }
+    });
+    
+    flowerGiftCard.addEventListener('mouseleave', function() {
+      if (flowerCheckbox.checked) {
+        flowerGiftCard.style.transform = 'translateY(-5px) scale(1.02)';
+      } else {
+        flowerGiftCard.style.transform = '';
+      }
+    });
+  }
+  
+  // ========== Navigation Functions ==========
+  
+  function navigateTo(pageName) {
+    const urlInput = document.getElementById("url");
+    if (!urlInput) return;
+    
+    const url = urlInput.value;
+    const link = document.createElement("a");
+    link.href = url + "?page=" + pageName;
+    link.style.display = "none";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+  
+  // ========== Utility Functions ==========
+  
+  function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+  
+  // ========== Initialization ==========
+  
+  window.onload = async function () {
+    try {
+      // تهيئة جميع المكونات
+      initWidgetToggle();
+      initHotelSearch();
+      initDateValidation();
+      setupCurrencyAutoFill();
+      setDefaultFinancialValues();
+      initFlowerGift();
+      
+      // تعيين تاريخ اليوم كتاريخ افتراضي
+      const today = new Date().toISOString().split('T')[0];
+      const checkInDate = document.querySelector('input[name="chekInDate"]');
+      const checkOutDate = document.querySelector('input[name="chekOutDate"]');
+      
+      if (checkInDate) checkInDate.value = today;
+      if (checkOutDate) checkOutDate.value = today;
+      
+      // تحميل البيانات
+      await getColumns();
+      
+      // إضافة مستمعات الأحداث
+      const form = document.getElementById("registration-form");
+      const submitAndSendButton = document.getElementById('submitAndSend');
+      const resetButton = document.getElementById('reset');
+      
+      if (form) {
+        form.addEventListener("submit", function(event) {
+          event.preventDefault();
+          submitData('save');
+        });
+      }
+      
+      if (submitAndSendButton) {
+        submitAndSendButton.addEventListener('click', function(e) {
+          e.preventDefault();
+          submitData('saveAndSend');
+        });
+      }
+      
+      if (resetButton) {
+        resetButton.addEventListener('click', async function(e) {
+          e.preventDefault();
+          const result = await Swal.fire({
+            title: "هل أنت متأكد؟",
+            text: "سيتم مسح جميع البيانات المدخلة",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "نعم، مسح",
+            cancelButtonText: "إلغاء",
+            confirmButtonColor: "#dc3545"
+          });
+          
+          if (result.isConfirmed) {
+            await clearAllFields();
+          }
+        });
+      }
+      
+      console.log("Application initialized successfully");
+    } catch (error) {
+      console.error("Initialization error:", error);
+      showLoading(false);
+      Swal.fire({
+        title: "خطأ",
+        text: "حدث خطأ أثناء تحميل التطبيق",
+        icon: "error",
+        confirmButtonText: "حسناً"
+      });
+    }
+  }; 
+</script>
+
+</html>
