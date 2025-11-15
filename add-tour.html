@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Ghada Tourism</title>
+    <base target="_top">
+      
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+    
+    <?!= include("29lt_bukrabold"); ?>
+    <?!= include("style"); ?>
+
+</head>
+  <body>
+    <nav class="navbar navbar-expand-md bg-body navbar-dark" id="app-navbar" style="padding-bottom: 0px;margin-bottom: 20px;padding-top: 0px;">
+        <div class="container-fluid"><a class="navbar-brand" href="javascript:void(0)"><img src="https://i.ibb.co/179ng0p/IMG-1995.png" height="70" style="padding-left: 0px;padding-bottom: 0px;margin-bottom: 0px;" loading="lazy"></a><button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-1"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navcol-1">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="javascript:void(0)" onclick="navigateTo('index')">Add Reservation</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="javascript:void(0)">Add Tour</a></li>
+                    <li class="nav-item"><a class="nav-link" href="javascript:void(0)" onclick="navigateTo('manage-reservations')">Manage Reservation</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container px-0" id="content">
+        <div> 
+             <form id="registration-form"> 
+                <div class="form-group mb-3 bg-white">
+                    <div id="formdiv" class="mx-0">
+                        <div class="row pt-4">
+                            <div class="col-md-12">
+                                <h1 class="text-center fw-bold" style="color: rgb(0,136,145);font-size: 20px;line-height: 50px;"><strong><span style="background-color: rgb(255, 255, 255);">SELLER INFORMATION</span></strong></h1>
+                            </div>
+                        </div>
+                        <div class="row mx-0" style="padding-top: 15px;">
+                            <div class="col-md-8 offset-md-1">
+                                <p style="font-family: '29lt_bukrabold';font-size: 16px;"><strong>SELLER NAME</strong></p>
+                            </div>
+                            <div class="col-md-10 offset-md-1"><select class="form-select" name="seller" id="sellerSelect" required>
+                                </select></div>
+                        </div>
+                        <div class="row mx-0" style="padding-top: 15px;">
+                            <div class="col-md-8 offset-md-1">
+                                <p style="font-family: '29lt_bukrabold';font-size: 16px;"><strong>SUPPLIER</strong></p>
+                            </div>
+                            <div class="col-md-10 offset-md-1"><select class="form-select" name="supplier" id="supplierSelect" required>
+                                </select></div>
+                        </div>
+                        <div class="row pt-4">
+                            <div class="col-md-12">
+                                <h1 class="text-center fw-bold" style="color: rgb(0,136,145);font-size: 20px;line-height: 50px;"><strong><span style="background-color: rgb(255, 255, 255);">CUSTOMER INFORMATION</span></strong></h1>
+                            </div>
+                        </div>
+                        <div class="row mx-0" style="padding-top: 15px;">
+                            <div class="col-md-8 offset-md-1">
+                                <p style="font-family: '29lt_bukrabold';font-size: 16px;"><strong>CUSTOMER NAME</strong></p>
+                            </div>
+                            <div class="col-md-10 offset-md-1"><input class="form-control" type="text" style="margin-left:0px;text-transform: uppercase;" name="name" required="" placeholder="اسم العميل"></div>
+                        </div>
+                        <div class="row mx-0" style="padding-top: 15px;">
+                            <div class="col-md-8 offset-md-1">
+                                <p style="font-family: '29lt_bukrabold';font-size: 16px;"><strong>PHONE NUMBER</strong></p>
+                            </div>
+                            <div class="col-md-10 offset-md-1"><input class="form-control" type="text" style="margin-left:0px;" name="phone" required="" pattern="^\+?[0-9]{10,15}$" placeholder="رقم العميل"></div>
+                        </div>
+                        <div class="row mx-0" style="padding-top: 15px;">
+                            <div class="col-md-8 offset-md-1">
+                                <p style="font-family: '29lt_bukrabold';font-size: 16px;"><strong>NATIONALITY</strong></p>
+                            </div>
+                            <div class="col-md-10 offset-md-1"><select class="form-select" name="nationality" id="nationalitySelect" required >
+                                </select></div>
+                        </div>
+                        <div class="row mx-0" style="padding-top: 15px;">
+                            <div class="col-md-8 offset-md-1">
+                                <p style="font-family: '29lt_bukrabold';font-size: 16px;"><strong>PERSON COUNT</strong></p>
+                            </div>
+                            <div class="col-md-10 offset-md-1"><select class="form-select" name="personCount" id="personSelect" required >
+                                </select></div>
+                        </div>
+                        <div class="row pt-4">
+                            <div class="col-md-12" style="margin-top: 10px;">
+                                <h1 class="text-center fw-bold" style="color: rgb(0,136,145);font-size: 20px;line-height: 50px;"><strong>TOUR INFORMATION</strong></h1>
+                            </div>
+                        </div>
+                        <div class="row mx-0" style="padding-top: 15px;">
+                            <div class="col-md-8 offset-md-1">
+                                <p style="font-family: '29lt_bukrabold';font-size: 16px;"><strong>TOUR TYPE</strong></p>
+                            </div>
+                            <div class="col-md-10 offset-md-1">
+                              <select class="form-select" name="tour" id="tourSelect" required> 
+                              </select>
+                            </div>
+                        </div>
+                        <div class="row mx-0" style="padding-top: 15px;">
+                            <div class="col-md-8 offset-md-1">
+                                <p style="font-family: '29lt_bukrabold';font-size: 16px;"><strong>TRANSPORT</strong></p>
+                            </div>
+                            <div class="col-md-10 offset-md-1"><input class="form-control" type="text" style="margin-left:0px;text-transform: uppercase;" name="transport" placeholder="المواصلات"></div>
+                        </div>
+                        <div class="row mx-0" style="padding-top: 15px;">
+                            <div class="col-md-8 offset-md-1">
+                                <p style="font-family: '29lt_bukrabold';font-size: 16px;"><strong>DRIVER NAME</strong></p>
+                            </div>
+                            <div class="col-md-10 offset-md-1"><input class="form-control" type="text" style="margin-left:0px;text-transform: uppercase;" name="driverName" placeholder="اسم السائق"></div>
+                        </div>
+
+                        <div class="row pt-4">
+                            <div class="col-md-12" style="margin-top: 10px;">
+                                <h1 class="text-center fw-bold" style="color: rgb(0,136,145);font-size: 20px;line-height: 50px;"><strong>FROM</strong></h1>
+                            </div>
+                        </div>
+
+                        <div class="row mx-0" style="padding-top: 15px;">
+                            <div class="col-md-8 offset-md-1">
+                                <p style="font-family: '29lt_bukrabold';font-size: 16px;"><strong>CITY</strong></p>
+                            </div>
+                            <div class="col-md-10 offset-md-1">
+                              <select class="form-select" name="fromCity" id="fromCitySelect" required>
+                              </select></div>
+                        </div>
+                        <div class="row mx-0" style="padding-top: 15px;">
+                            <div class="col-md-8 offset-md-1">
+                                <p style="font-family: '29lt_bukrabold';font-size: 16px;"><strong>PLACE TYPE</strong></p>
+                            </div>
+                            <div class="col-md-10 offset-md-1">
+                              <select class="form-select" name="fromPlace" id="fromPlaceSelect" required>
+                              </select></div>
+                        </div>
+                        <div class="row mx-0" style="padding-top: 15px;">
+                            <div class="col-md-8 offset-md-1">
+                                <p style="font-family: '29lt_bukrabold';font-size: 16px;"><strong>PLACE NAME</strong></p>
+                            </div>
+                            <div class="col-md-10 offset-md-1"><input class="form-control" type="text" style="margin-left:0px;text-transform: uppercase;" name="fromPlaceName" placeholder="اسم المكان"></div>
+                        </div>
+                        <div class="row mx-0" style="padding-top:24px;">
+                            <div class="col-md-8 offset-md-1">
+                                <p style="font-family: '29lt_bukrabold';font-size: 16px;"><strong>DATE</strong></p>
+                            </div>
+                            <div class="col-md-10 offset-md-1"><input class="form-control" name="pickupDate" type="date" required></div>
+                        </div>
+
+                        <div class="row pt-4">
+                            <div class="col-md-12" style="margin-top: 10px;">
+                                <h1 class="text-center fw-bold" style="color: rgb(0,136,145);font-size: 20px;line-height: 50px;"><strong>TO</strong></h1>
+                            </div>
+                        </div>
+
+                        <div class="row mx-0" style="padding-top: 15px;">
+                            <div class="col-md-8 offset-md-1">
+                                <p style="font-family: '29lt_bukrabold';font-size: 16px;"><strong>CITY</strong></p>
+                            </div>
+                            <div class="col-md-10 offset-md-1">
+                              <select class="form-select" name="toCity" id="toCitySelect" required>
+                              </select></div>
+                        </div>
+                        <div class="row mx-0" style="padding-top: 15px;">
+                            <div class="col-md-8 offset-md-1">
+                                <p style="font-family: '29lt_bukrabold';font-size: 16px;"><strong>PLACE TYPE</strong></p>
+                            </div>
+                            <div class="col-md-10 offset-md-1">
+                              <select class="form-select" name="toPlace" id="toPlaceSelect" required>
+                              </select></div>
+                        </div>
+                        <div class="row mx-0" style="padding-top: 15px;">
+                            <div class="col-md-8 offset-md-1">
+                                <p style="font-family: '29lt_bukrabold';font-size: 16px;"><strong>PLACE NAME</strong></p>
+                            </div>
+                            <div class="col-md-10 offset-md-1"><input class="form-control" type="text" style="margin-left:0px;text-transform: uppercase;" name="toPlaceName" placeholder="اسم المكان"></div>
+                        </div>
+                        <div class="row mx-0" style="padding-top:24px;">
+                            <div class="col-md-8 offset-md-1">
+                                <p style="font-family: '29lt_bukrabold';font-size: 16px;"><strong>DATE</strong></p>
+                            </div>
+                            <div class="col-md-10 offset-md-1"><input class="form-control" name="dropoffDate" type="date" required></div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-md-12" style="margin-top: 10px;">
+                                <h1 class="text-center fw-bold" style="color: rgb(0,136,145);font-size: 20px;line-height: 50px;"><strong>FINANCIAL INFORMATION</strong></h1>
+                            </div>
+                        </div>
+                        <div class="row mx-0" style="padding-top: 15px;">
+                            <div class="col-md-8 offset-md-1">
+                                <p style="font-family: '29lt_bukrabold';font-size: 16px;"><strong>PRICE COST</strong></p>
+                            </div>
+                            <div class="col-md-10 offset-md-1"><input class="form-control" type="text" style="margin-left:0px;" name="tourPrice" required="" placeholder="سعر الرحلة" inputmode="decimal"></div>
+                        </div>
+                        <div class="row mx-0" style="padding-top: 15px;">
+                            <div class="col-md-8 offset-md-1">
+                                <p style="font-family: '29lt_bukrabold';font-size: 16px;"><strong>SELLING PRICE</strong></p>
+                            </div>
+                            <div class="col-md-10 offset-md-1"><input class="form-control" type="text" style="margin-left:0px;" name="sellingPrice" required="" placeholder="سعر المبيع" inputmode="decimal"></div>
+                        </div>
+
+                        <div class="row mx-0" style="padding-top: 15px;">
+                            <div class="col-md-8 offset-md-1">
+                                <p style="font-family: '29lt_bukrabold';font-size: 16px;"><strong>RECEIVED AMOUNT</strong></p>
+                            </div>
+                            <div class="col-md-10 offset-md-1"><input class="form-control" type="text" style="margin-left:0px;" name="receivedAmount" required="" inputmode="decimal" placeholder="المبلغ المستلم"></div>
+                        </div>
+                        <div class="row mx-0" style="padding-top: 15px;">
+                            <div class="col-md-8 offset-md-1">
+                                <p style="font-family: '29lt_bukrabold';font-size: 16px;"><strong>COLLECTION METHOD</strong></p>
+                            </div>
+                            <div class="col-md-10 offset-md-1"><select class="bg-transparent form-select" name="collectionMethod" id="collectionSelect" required>
+                                </select></div>
+                        </div>
+                        <div class="row mx-0" style="padding-top: 15px;">
+                            <div class="col-md-8 offset-md-1">
+                                <p style="font-family: '29lt_bukrabold';font-size: 16px;"><strong>CURRENCY TYPE</strong></p>
+                            </div>
+                            <div class="col-md-10 offset-md-1"><select class="form-select" name="currencyType" id="currencySelect" required>
+                                </select></div>
+                        </div>
+                        <div class="row" style="margin-right:0px;margin-left:0px;padding-top:24px;">
+                            <div class="col-md-8 offset-md-1">
+                                <p style="font-family: '29lt_bukrabold';font-size: 16px;"><strong>Note</strong></p>
+                            </div>
+                            <div class="col-md-10 offset-md-1"><textarea class="form-control" style="font-size:14px;" placeholder="اكتب ملاحظاتك" name="note"></textarea></div>
+                        </div>
+
+                        <div class="row d-flex justify-content-center" style="margin-right:0px;margin-left:0px;padding-top:24px;">
+                            <div class="col col-5 text-start"><button class="btn btn-danger btn-lg" type="reset">Clear </button></div>
+                            <div class="col col-5 text-end"><button class="btn btn-lg" id="submit" type="submit">Submit </button></div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <?var url = getUrl();?><input type="hidden" value="<?= url ?>" id="url" />
+        </div>
+    </div>
+  </body>
+  
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+<script>
+      function navigateTo(pageName) {
+          
+      var url = document.getElementById("url").value;
+      var link = document.createElement('a');
+      link.href = pageName == 'index' ? url : url + "?page=" + pageName;
+      link.id = 'linkURL';
+      document.body.appendChild(link);
+      document.getElementById("linkURL").click();    
+
+      }
+
+      function populateCities(selectName) {
+          google.script.run.withSuccessHandler(function(cities) {
+          console.log("Cities received:", cities);  // Debugging
+          const citySelect = document.getElementById(selectName);
+          citySelect.innerHTML = ''; // Clear previous options
+
+          //place holder 
+          const placeholderOption = document.createElement('option');
+          placeholderOption.value = '';
+          placeholderOption.textContent = 'اسم المدينة';
+          placeholderOption.disabled = true;  // Option is not selectable
+          placeholderOption.selected = true;  // Default selected option
+          citySelect.appendChild(placeholderOption);
+
+          cities.forEach(function(city) {
+            const option = document.createElement('option');
+            option.value = city;
+            option.textContent = city;
+            citySelect.appendChild(option);
+          });
+        }).getCities();
+      }
+
+      function getColumns(){
+        const selectList = [
+          { selectId: 'sellerSelect', columnName: 'SELLERS' , placeholder: 'اسم البائع' },
+          { selectId: 'supplierSelect', columnName: 'TOUR SUPPLIER' , placeholder: 'المزود' },
+          { selectId: 'nationalitySelect', columnName: 'NATIONALITY' , placeholder: 'جنسية العميل' },
+          { selectId: 'personSelect', columnName: 'PERSONS' , placeholder: 'عدد الاشخاص'},
+          { selectId: 'tourSelect', columnName: 'TOUR TYPE' , placeholder: 'نوع الجولة'},
+          { selectId: 'fromPlaceSelect', columnName: 'PLACE TYPE' , placeholder: 'نقطة التجمع'},
+          { selectId: 'toPlaceSelect', columnName: 'PLACE TYPE' , placeholder: 'الوجهة'},
+          { selectId: 'currencySelect', columnName: 'CURRENCY TYPE' , placeholder: 'العملة'},
+          { selectId: 'collectionSelect', columnName: 'COLLECTION METHOD' , placeholder: 'طريقة التحصيل'},
+        ];
+        populateCities('fromCitySelect');
+        populateCities('toCitySelect');
+
+        selectList.forEach(({selectId, columnName,placeholder}) => getColumn(selectId,columnName,placeholder));
+      }
+
+      function getColumn(selectId, columnName,placeholder) {
+          google.script.run.withSuccessHandler(function(column) {
+              console.log(`${columnName} received:`, column);  // Debugging
+              const selectElement = document.getElementById(selectId);
+              selectElement.innerHTML = '';  // Clear previous options
+
+              // Add an empty placeholder option
+              const placeholderOption = document.createElement('option');
+              placeholderOption.value = '';
+              placeholderOption.textContent = placeholder;
+              placeholderOption.disabled = true;  // Option is not selectable
+              placeholderOption.selected = true;  // Default selected option
+              selectElement.appendChild(placeholderOption);
+
+              // Populate the select element with actual options
+              column.forEach(function(item) {
+                  const option = document.createElement('option');
+                  option.value = item;
+                  option.textContent = item;
+                  selectElement.appendChild(option);
+              });
+          }).getColumnByName(columnName);
+      }
+
+      window.onload = function() {
+        getColumns();
+      }
+
+      document.getElementById("registration-form").addEventListener("submit", submitData);
+
+      function submitData(event) {
+        event.preventDefault(); // Prevent default form submission
+        console.log('Form submitted');
+
+        // Collect form data
+        const formData = new FormData(document.getElementById("registration-form"));
+        const data = {};
+        formData.forEach((value, key) => {
+            data[key] = value;
+        });
+
+        const valuesArray = Object.values(data);
+        
+        // Run server-side function and handle success
+        google.script.run.withSuccessHandler(function(response) {
+
+            // Clear all <select> elements
+            // const selects = document.querySelectorAll("#registration-form select");
+            // selects.forEach(select => {
+            //     select.selectedIndex = 0;
+            // });
+            event.preventDefault(); 
+            Swal.fire({
+            title: "Success",
+            text: "Tour Added Successfuly",
+            icon: "success",
+            heightAuto: false,
+            showConfirmButton: false,
+            timer:1500,
+            });
+          setTimeout(() => {
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+              }, 2000);      
+          document.getElementById("registration-form").reset();
+          getColumns();
+        }).addTour(valuesArray); // Pass row data to the server function
+        }
+
+</script>
+</html> 
+
+
+
+
+
+
+
+
+
+
