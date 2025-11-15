@@ -20,6 +20,7 @@ var KEY_CITIES = 'city_data';
 var KEY_HOTELS = 'hotels_data';
 var KEY_RESERVATIONS = 'reservations_data';
 var KEY_USER_ROLE = 'user_role'; // كاش خاص بجلسة المستخدم
+var ADMIN_ONLY_PAGES = ['manage-statistics', 'SUPPLIER', 'mediator'];
 
 // -----------------------------------------------------------------
 // 🔒 دوال الأمان وتسجيل الدخول
@@ -55,7 +56,7 @@ function checkAuthStatus() {
  * [تُستدعى من login.html]
  * تتحقق من كلمة المرور المدخلة وتخزن الجلسة في الكاش.
  * @param {string} password كلمة المرور التي أدخلها المستخدم.
- * @returns {boolean} ترجع true إذا نجح الدخول, و false إذا فشل.
+ * @returns {{success: boolean, role: ('admin'|'user'|null), redirect: string|undefined}}
  */
 function doLogin(password) {
   var properties = PropertiesService.getScriptProperties();
@@ -64,17 +65,14 @@ function doLogin(password) {
   var cache = CacheService.getScriptCache();
 
   if (password === adminPass) {
-    // نجح كـ Admin
     cache.put(KEY_USER_ROLE, 'admin', SESSION_DURATION);
-    return true;
+    return { success: true, role: 'admin', redirect: 'manage-statistics' };
   } else if (password === userPass) {
-    // نجح كـ User
     cache.put(KEY_USER_ROLE, 'user', SESSION_DURATION);
-    return true;
+    return { success: true, role: 'user', redirect: 'index' };
   }
-  
-  // فشل تسجيل الدخول
-  return false;
+
+  return { success: false, role: null };
 }
 
 /**
@@ -123,13 +121,11 @@ function doGet(e) {
   }
 
   // 2. إذا كان مسجلاً، تحقق من الصلاحيات
-  
-  // حماية صفحة الإحصائيات (manage-statistics)
-  if (page === 'manage-statistics' && role !== 'admin') {
-    // إذا كان "user" يحاول الوصول، امنعه
-    var template = HtmlService.createTemplateFromFile('index'); // أو صفحة خطأ مخصصة
-    template.errorMessage = 'ليس لديك صلاحية الوصول لهذه الصفحة';
-    return template.evaluate().setTitle("Error").addMetaTag("viewport", "width=device-width, initial-scale=1");
+  if (ADMIN_ONLY_PAGES.indexOf(page) !== -1 && role !== 'admin') {
+    var defaultUrl = ScriptApp.getService().getUrl() + '?page=index';
+    return HtmlService.createHtmlOutput(
+      '<script>window.top.location.href = "' + defaultUrl + '";</script>'
+    );
   }
 
   // 3. إذا كان مسجلاً ولديه صلاحية (أو الصفحة لا تتطلب صلاحية admin)
@@ -137,7 +133,7 @@ function doGet(e) {
   // إذا كان المستخدم مسجلاً (role != null) ويحاول فتح 'login' (وهي الافتراضية)
   // قم بتحميل صفحة index مباشرةً لتفادي شاشة بيضاء أو إعادة تحميل غير منتهية.
   if (page === 'login') {
-    page = 'index';
+    page = (role === 'admin') ? 'manage-statistics' : 'index';
   }
   
   // دالة تسجيل الخروج الخاصة
@@ -361,9 +357,15 @@ function addNewBooking(bookingDetails, emailAddress, notes) {
  */
 function addClient(clientData) {
   var sheet = ss.getSheetByName("Clients");
-  sheet.appendRow([clientData.name, clientData.phone, clientData.nationality]);
+  sheet.appendRow([
+    clientData.name,
+    clientData.phone,
+    clientData.nationality,
+    clientData.email || '',
+    clientData.city || '',
+    clientData.notes || ''
+  ]);
   
-  // *** مسح الكاش ***
   cache.remove(KEY_CLIENTS);
   Logger.log("تم مسح كاش العملاء");
   
@@ -384,6 +386,29 @@ function addSupplier(supplierData) {
   Logger.log("تم مسح كاش الموردين");
 
   return "Supplier added successfully";
+}
+
+/**
+ * إضافة فندق جديد ومسح الكاش الخاص بالفنادق.
+ * @param {Object} hotelData كائن يحتوي على بيانات الفندق.
+ * @returns {string} رسالة نجاح.
+ */
+function addHotel(hotelData) {
+  var sheet = ss.getSheetByName("Hotels");
+  sheet.appendRow([
+    hotelData.name,
+    hotelData.city,
+    hotelData.category || '',
+    hotelData.contact || '',
+    hotelData.phone || '',
+    hotelData.email || '',
+    hotelData.notes || ''
+  ]);
+
+  cache.remove(KEY_HOTELS);
+  Logger.log("تم مسح كاش الفنادق");
+
+  return "Hotel added successfully";
 }
 
 // -----------------------------------------------------------------

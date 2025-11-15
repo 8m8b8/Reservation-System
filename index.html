@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html data-bs-theme="light" lang="en">
-<head>
+  <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
   <title>Ghada Tourism</title>
-  <base target="_top" />
+    <base target="_top" />
+    <? var appUrl = getUrl(); var url = appUrl; ?>
 
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" />
@@ -648,51 +649,8 @@
 <base target="_blank">
 </head>
 
-<body dir="rtl">
-  <!-- شريط التنقل -->
-  <nav class="navbar navbar-expand-md bg-body navbar-dark" id="app-navbar" style="padding-bottom: 0px; margin-bottom: 20px; padding-top: 0px">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="javascript:void(0)">
-        <img src="https://i.ibb.co/179ng0p/IMG-1995.png " height="70" style="padding-left: 0px; padding-bottom: 0px; margin-bottom: 0px" loading="lazy" />
-      </a>
-      <button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-1">
-        <span class="visually-hidden">القائمة</span>
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navcol-1">
-        <ul class="navbar-nav me-auto">
-          <li class="nav-item">
-            <a class="nav-link active" href="javascript:void(0)">إضافة حجز</a>
-          </li>
-          <!-- القائمة المنسدلة "إضافة" -->
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="addDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              إضافة
-            </a>
-            <ul class="dropdown-menu" aria-labelledby="addDropdown">
-              <li><a class="dropdown-item" href="javascript:void(0)" onclick="navigateTo('Add-client')">إضافة عميل</a></li>
-              <li><a class="dropdown-item" href="javascript:void(0)" onclick="navigateTo('add-tour')">إضافة رحلة</a></li>
-              <li><a class="dropdown-item" href="javascript:void(0)" onclick="navigateTo('add-hotel')">إضافة فندق</a></li>
-            </ul>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="javascript:void(0)" onclick="navigateTo('manage-reservations')">إدارة الحجوزات</a>
-          </li>
-          <!-- القائمة المنسدلة "إحصائيات" -->
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="statisticsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              إحصائيات
-            </a>
-            <ul class="dropdown-menu" aria-labelledby="statisticsDropdown">
-              <li><a class="dropdown-item" href="javascript:void(0)" onclick="navigateTo('SUPPLIER')">مزودي الخدمات</a></li>
-              <li><a class="dropdown-item" href="javascript:void(0)" onclick="navigateTo('mediators')">الوسطاء</a></li>
-              <li><a class="dropdown-item" href="javascript:void(0)" onclick="navigateTo('manage-statistics')">إدارة الإحصائيات</a></li>
-            </ul>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
+<body dir="rtl" data-page="index">
+  <?!= include("shared-header"); ?>
 
   <div class="container-lg px-0" id="content">
     <div>
@@ -1133,21 +1091,20 @@
             <!-- أزرار التحكم -->
             <div class="row d-flex justify-content-center" style="margin-right: 0px; margin-left: 0px; padding-top: 24px">
               <div class="col-12">
-                <div class="button-row">
-                  <button class="btn btn-danger btn-lg" id="reset" type="reset">
-                    مسح
-                  </button>
-                  <button class="btn btn-primary btn-lg" id="submit" type="submit">
-                    حفظ
-                  </button>
-                  <button class="btn btn-success btn-lg" id="submitAndSend" type="button">
-                    حفظ وارسال
-                  </button>
-                </div>
+            <div class="button-row">
+              <button class="btn btn-danger btn-lg" id="reset" type="reset">
+                مسح
+              </button>
+              <button class="btn btn-primary btn-lg" id="submit" type="submit">
+                حفظ
+              </button>
+              <button class="btn btn-success btn-lg" id="submitAndSend" type="button">
+                حفظ وارسال
+              </button>
+            </div>
               </div>
             </div>
-            <?var url = getUrl();?>
-            <input type="hidden" value="<?= url ?>" id="url" />
+        <input type="hidden" value="<?= url ?>" id="url" />
           </div>
         </div>
       </form>

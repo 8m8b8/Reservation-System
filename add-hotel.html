@@ -1,1 +1,255 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+  <title>إضافة فندق جديد</title>
+  <base target="_top">
+  <? var appUrl = getUrl(); var url = appUrl; ?>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      background-color: #f3f6fb;
+      color: #2c3f3f;
+    }
+
+    .hotel-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 32px;
+      box-shadow: 0 10px 35px rgba(0,0,0,0.08);
+      border-top: 6px solid #00a0a9;
+    }
+
+    .form-label {
+      font-weight: 600;
+      color: #006d75;
+    }
+
+    .form-control,
+    .form-select, textarea {
+      border-radius: 12px;
+      border: 1px solid #d9e2ec;
+      padding: 12px;
+    }
+
+    .form-control:focus,
+    .form-select:focus,
+    textarea:focus {
+      border-color: #00a0a9;
+      box-shadow: none;
+    }
+
+    .submit-btn {
+      background: linear-gradient(135deg, #00a0a9, #00c0bc);
+      border: none;
+      border-radius: 12px;
+      padding: 14px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #fff;
+      width: 100%;
+      transition: transform 0.2s ease;
+    }
+
+    .submit-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 160, 169, 0.3);
+    }
+
+    .badge-tip {
+      background: rgba(0, 160, 169, 0.12);
+      color: #008891;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+  </style>
+</head>
+
+<body data-page="add-hotel">
+  <?!= include("shared-header"); ?>
+
+  <div class="container my-4">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="hotel-card">
+          <div class="badge-tip">
+            <i class="fas fa-hotel"></i>
+            أضف بيانات الفندق لتسهيل اختيار الموردين
+          </div>
+          <h3 class="fw-bold mb-4" style="color:#006d75;">استمارة تسجيل فندق</h3>
+
+          <form id="hotelForm">
+            <div class="mb-3">
+              <label class="form-label" for="hotelName">اسم الفندق *</label>
+              <input type="text" class="form-control" id="hotelName" name="name" placeholder="اسم الفندق" required>
+            </div>
+
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label" for="hotelCity">المدينة *</label>
+                <select id="hotelCity" name="city" class="form-select" required>
+                  <option value="" disabled selected>اختر المدينة</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="hotelCategory">التصنيف</label>
+                <select id="hotelCategory" name="category" class="form-select">
+                  <option value="" selected>غير محدد</option>
+                  <option value="5 نجوم">5 نجوم</option>
+                  <option value="4 نجوم">4 نجوم</option>
+                  <option value="3 نجوم">3 نجوم</option>
+                  <option value="شقق فندقية">شقق فندقية</option>
+                  <option value="منتجع">منتجع</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row g-3 mt-1">
+              <div class="col-md-6">
+                <label class="form-label" for="hotelContact">اسم جهة التواصل</label>
+                <input type="text" class="form-control" id="hotelContact" name="contact" placeholder="مثال: أ. أحمد">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="hotelPhone">رقم الهاتف</label>
+                <input type="tel" class="form-control" id="hotelPhone" name="phone" placeholder="+9665xxxxxxxx">
+              </div>
+            </div>
+
+            <div class="mb-3 mt-1">
+              <label class="form-label" for="hotelEmail">البريد الإلكتروني</label>
+              <input type="email" class="form-control" id="hotelEmail" name="email" placeholder="hotel@example.com">
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label" for="hotelNotes">ملاحظات إضافية</label>
+              <textarea class="form-control" id="hotelNotes" name="notes" rows="4" placeholder="خدمات إضافية، سياسات الدفع، الخ..."></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn" id="hotelSubmitBtn">
+              <span class="default-text">حفظ بيانات الفندق</span>
+              <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <input type="hidden" value="<?= url ?>" id="url" />
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+    crossorigin="anonymous"></script>
+  <script>
+    const hotelForm = document.getElementById('hotelForm');
+    const hotelCitySelect = document.getElementById('hotelCity');
+    const submitBtn = document.getElementById('hotelSubmitBtn');
+    const spinner = submitBtn.querySelector('.spinner-border');
+    const submitText = submitBtn.querySelector('.default-text');
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadCities();
+
+      hotelForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+        const formData = new FormData(hotelForm);
+        const payload = {
+          name: (formData.get('name') || '').trim(),
+          city: formData.get('city') || '',
+          category: formData.get('category') || '',
+          contact: (formData.get('contact') || '').trim(),
+          phone: (formData.get('phone') || '').trim(),
+          email: (formData.get('email') || '').trim(),
+          notes: (formData.get('notes') || '').trim()
+        };
+
+        if (!payload.name || !payload.city) {
+          Swal.fire({
+            title: 'تنبيه',
+            text: 'اسم الفندق والمدينة حقول إلزامية.',
+            icon: 'warning',
+            confirmButtonText: 'حسناً'
+          });
+          return;
+        }
+
+        toggleHotelLoading(true);
+
+        google.script.run
+          .withSuccessHandler(() => {
+            Swal.fire({
+              title: 'تم الحفظ',
+              text: 'تمت إضافة الفندق بنجاح.',
+              icon: 'success',
+              timer: 1500,
+              showConfirmButton: false
+            });
+            hotelForm.reset();
+            toggleHotelLoading(false);
+          })
+          .withFailureHandler((error) => {
+            console.error(error);
+            Swal.fire({
+              title: 'خطأ',
+              text: 'تعذر حفظ بيانات الفندق. الرجاء المحاولة لاحقاً.',
+              icon: 'error',
+              confirmButtonText: 'حسناً'
+            });
+            toggleHotelLoading(false);
+          })
+          .addHotel(payload);
+      });
+    });
+
+    function loadCities() {
+      google.script.run
+        .withSuccessHandler(function (data) {
+          const cities = Array.isArray(data)
+            ? data.map(row => Array.isArray(row) ? row[0] : row).filter(Boolean)
+            : [];
+          populateSelect(hotelCitySelect, cities, 'اختر المدينة');
+        })
+        .getCity();
+    }
+
+    function populateSelect(selectElement, items, placeholder) {
+      const fragment = document.createDocumentFragment();
+      const placeholderOption = document.createElement('option');
+      placeholderOption.value = '';
+      placeholderOption.textContent = placeholder;
+      placeholderOption.disabled = true;
+      placeholderOption.selected = true;
+      fragment.appendChild(placeholderOption);
+
+      items.forEach(item => {
+        if (!item) return;
+        const option = document.createElement('option');
+        option.value = item;
+        option.textContent = item;
+        fragment.appendChild(option);
+      });
+
+      selectElement.innerHTML = '';
+      selectElement.appendChild(fragment);
+    }
+
+    function toggleHotelLoading(isLoading) {
+      submitBtn.disabled = isLoading;
+      spinner.classList.toggle('d-none', !isLoading);
+      submitText.classList.toggle('d-none', isLoading);
+    }
+  </script>
+</body>
+</html>
 

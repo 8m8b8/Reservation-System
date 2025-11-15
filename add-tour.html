@@ -4,7 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>Ghada Tourism</title>
-    <base target="_top">
+      <base target="_top">
+      <? var appUrl = getUrl(); var url = appUrl; ?>
       
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
@@ -13,18 +14,8 @@
     <?!= include("style"); ?>
 
 </head>
-  <body>
-    <nav class="navbar navbar-expand-md bg-body navbar-dark" id="app-navbar" style="padding-bottom: 0px;margin-bottom: 20px;padding-top: 0px;">
-        <div class="container-fluid"><a class="navbar-brand" href="javascript:void(0)"><img src="https://i.ibb.co/179ng0p/IMG-1995.png" height="70" style="padding-left: 0px;padding-bottom: 0px;margin-bottom: 0px;" loading="lazy"></a><button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-1"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
-            <div class="collapse navbar-collapse" id="navcol-1">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="javascript:void(0)" onclick="navigateTo('index')">Add Reservation</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="javascript:void(0)">Add Tour</a></li>
-                    <li class="nav-item"><a class="nav-link" href="javascript:void(0)" onclick="navigateTo('manage-reservations')">Manage Reservation</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+  <body data-page="add-tour">
+    <?!= include("shared-header"); ?>
     
     <div class="container px-0" id="content">
         <div> 
@@ -230,8 +221,8 @@
                         </div>
                     </div>
                 </div>
-            </form>
-            <?var url = getUrl();?><input type="hidden" value="<?= url ?>" id="url" />
+              </form>
+              <input type="hidden" value="<?= url ?>" id="url" />
         </div>
     </div>
   </body>
