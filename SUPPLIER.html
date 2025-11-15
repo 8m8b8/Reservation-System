@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم المورد - متوافق</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLMD/CDt3uWn+Z2uKDAzG4/iU4/wKwFq0s1s2rL2I/D6hK9V/D2t4vE5G/W+y1H0w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* تعريف المتغيرات التي استخدمتها */
+        :root {
+            --primary-color: #008891;
+            --primary-dark: #006d75;
+            --primary-light: #00a0a9;
+            --text-dark: #2c3f3f;
+            --bg-light: #f8f9fa;
+            --shadow-light: 0 2px 10px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 4px 15px rgba(0, 0, 0, 0.15);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* تطبيق خط القاهرة على جميع العناصر */
+        * {
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+        }
+
+        /* تنسيق الحاوية الرئيسية */
+        .main-container {
+            max-width: 1400px;
+            margin-top: 20px;
+            padding: 0 15px;
+        }
+        
+        /* شريط الأيقونات العلوي - محاكاة لتنسيق الشريط العلوي لديك */
+        .icon-nav {
+            display: flex;
+            justify-content: center;
+            background: var(--primary-color);
+            padding: 10px 0;
+            border-radius: 0 0 10px 10px;
+            box-shadow: var(--shadow-medium);
+            margin-bottom: 20px;
+        }
+
+        .icon-nav-item {
+            text-align: center;
+            padding: 0 20px;
+            cursor: pointer;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.9);
+            transition: var(--transition);
+        }
+
+        .icon-nav-item i {
+            display: block;
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        
+        .icon-nav-item:hover {
+            color: white;
+            opacity: 0.8;
+        }
+        
+        .icon-nav-item.active {
+            background-color: var(--primary-dark);
+            color: white;
+            border-radius: 5px;
+            padding: 5px 20px;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* لوحة التحكم الرئيسية */
+        .main-panel {
+            background-color: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: var(--shadow-light);
+            margin-bottom: 30px;
+        }
+        
+        /* شريط العنوان والتصدير */
+        .header-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .export-button {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+        
+        .export-button:hover {
+            background-color: var(--primary-dark);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* أزرار الوكالات */
+        .agency-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .agency-button {
+            background-color: #f0f2f5;
+            color: var(--text-dark);
+            border: 1px solid #ddd;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .agency-button:hover {
+            background-color: #e0e0e0;
+        }
+
+        .agency-button.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-dark);
+            box-shadow: 0 4px 10px rgba(0, 136, 145, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        /* حقول التاريخ والمقاييس */
+        .date-input-group label {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+        
+        .date-input-group input {
+            border-radius: 8px;
+            border-color: #ced4da;
+            padding: 10px;
+            text-align: center;
+        }
+        
+        /* شاشة الأرقام الرئيسية */
+        .main-metrics-display {
+            background-color: var(--bg-light);
+            border: 1px solid #e0e0e0;
+            padding: 40px 20px;
+            margin-top: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .big-number {
+            font-size: 60px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        
+        .summary-box {
+            text-align: center;
+            padding: 10px;
+        }
+        
+        .summary-box label {
+            display: block;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .summary-box input {
+            padding: 10px;
+            border: 2px solid var(--primary-light);
+            border-radius: 8px;
+            width: 100%;
+            text-align: center;
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+
+        /* الجداول */
+        .table-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 25px;
+            box-shadow: var(--shadow-light);
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .table-header h3 {
+            color: var(--primary-dark);
+            font-size: 22px;
+            border-bottom: 3px solid var(--primary-light);
+            padding-bottom: 5px;
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .booking-count {
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .booking-count span {
+            padding: 5px 12px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50px;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .data-table th, .data-table td {
+            border: none;
+            padding: 12px;
+            text-align: center;
+            font-size: 14px;
+            vertical-align: middle;
+        }
+
+        .data-table thead th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+        }
+
+        .data-table tbody tr {
+            transition: background-color 0.2s;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .data-table tbody tr:hover {
+            background-color: #f3fcfd;
+        }
+        
+        .data-table tbody tr:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body dir="rtl">
+    <div class="icon-nav">
+        <div class="icon-nav-item active">
+            <i class="fas fa-home"></i>
+            <span>الصفحة الرئيسية</span>
+        </div>
+        <div class="icon-nav-item">
+            <i class="fas fa-box-open"></i>
+            <span>محتوى الخدمة</span>
+        </div>
+        <div class="icon-nav-item">
+            <i class="fas fa-user-friends"></i>
+            <span>الوسطاء</span>
+        </div>
+        <div class="icon-nav-item">
+            <i class="fas fa-cogs"></i>
+            <span>إدارة الإتصالات</span>
+        </div>
+    </div>
+
+    <div class="container main-container">
+        
+        <div class="main-panel">
+            
+            <div class="header-controls">
+                <div class="h4 fw-bold" style="color: var(--primary-color);">لوحة تحكم <span style="color: var(--primary-dark);">المورد</span></div>
+                
+                <button class="export-button">
+                    تصدير تقرير
+                    <i class="fas fa-file-export"></i>
+                </button>
+            </div>
+            
+            <div class="agency-buttons">
+                <button class="agency-button active">YOUR WORLD TRAVEL</button>
+                <button class="agency-button">GITA</button>
+                <button class="agency-button">FGI</button>
+                <button class="agency-button">OKBA</button>
+            </div>
+
+            <div class="row justify-content-center mb-4">
+                <div class="col-12 col-md-5 date-input-group text-center">
+                    <label>تاريخ الوصول (CHECK-IN)</label>
+                    <input type="date" class="form-control" />
+                </div>
+                <div class="col-12 col-md-5 date-input-group text-center">
+                    <label>تاريخ المغادرة (CHECK-OUT)</label>
+                    <input type="date" class="form-control" />
+                </div>
+            </div>
+            
+            <div class="main-metrics-display">
+                <div class="big-number">458,320 SAR</div>
+                
+                <div class="row justify-content-center">
+                    <div class="col-12 col-md-5 summary-box">
+                        <label>مجموع الإلتزامات</label>
+                        <input type="text" class="form-control" value="000,000 SAR" readonly />
+                    </div>
+                    <div class="col-12 col-md-5 summary-box">
+                        <label>مجموع المستحقات</label>
+                        <input type="text" class="form-control" value="000,000 SAR" readonly />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-card">
+            <div class="table-header">
+                <h3>جدول المستحقات <i class="fas fa-money-bill-wave"></i></h3>
+                <div class="booking-count">
+                    <span>120</span>
+                    عدد الحجوزات
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover data-table">
+                    <thead>
+                        <tr>
+                            <th>اسم العميل</th>
+                            <th>الوكيل</th>
+                            <th>تاريخ الدخول</th>
+                            <th>مجموع السعر علينا</th>
+                            <th>العمولة</th>
+                            <th>المبلغ المتبقي</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>أحمد محمد</td>
+                            <td>YOUR WORLD TRAVEL</td>
+                            <td>2025-01-15</td>
+                            <td>5,000 SAR</td>
+                            <td>500 SAR</td>
+                            <td>4,500 SAR</td>
+                        </tr>
+                        <tr>
+                            <td>سارة علي</td>
+                            <td>GITA</td>
+                            <td>2025-02-20</td>
+                            <td>7,200 SAR</td>
+                            <td>720 SAR</td>
+                            <td>6,480 SAR</td>
+                        </tr>
+                        <tr>
+                            <td>خالد ناصر</td>
+                            <td>FGI</td>
+                            <td>2025-03-05</td>
+                            <td>3,500 SAR</td>
+                            <td>350 SAR</td>
+                            <td>3,150 SAR</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="table-card">
+            <div class="table-header">
+                <h3>جدول الإلتزامات <i class="fas fa-handshake"></i></h3>
+                <div class="booking-count">
+                    <span>55</span>
+                    عدد الحجوزات
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover data-table">
+                    <thead>
+                        <tr>
+                            <th>اسم العميل</th>
+                            <th>الوكيل</th>
+                            <th>تاريخ الدخول</th>
+                            <th>مجموع السعر علينا</th>
+                            <th>العمولة</th>
+                            <th>المبلغ المتبقي</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>نور سامي</td>
+                            <td>YOUR WORLD TRAVEL</td>
+                            <td>2025-01-15</td>
+                            <td>4,200 SAR</td>
+                            <td>420 SAR</td>
+                            <td>3,780 SAR</td>
+                        </tr>
+                        <tr>
+                            <td>ماجد فهد</td>
+                            <td>OKBA</td>
+                            <td>2025-02-20</td>
+                            <td>6,000 SAR</td>
+                            <td>600 SAR</td>
+                            <td>5,400 SAR</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
