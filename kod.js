@@ -193,7 +193,7 @@ function getClients() {
     return JSON.parse(cached); 
   }
   
-  var sheet = ss.getSheetByName("Clients");
+  var sheet = ss.getSheetByName("Customers");
   var data = sheet.getDataRange().getValues();
   data.shift(); // إزالة صف العناوين
   cache.put(KEY_CLIENTS, JSON.stringify(data), CACHE_DURATION);
@@ -356,7 +356,7 @@ function addNewBooking(bookingDetails, emailAddress, notes) {
  * @returns {string} رسالة نجاح.
  */
 function addClient(clientData) {
-  var sheet = ss.getSheetByName("Clients");
+  var sheet = ss.getSheetByName("Customers");
   sheet.appendRow([
     clientData.name,
     clientData.phone,
@@ -438,4 +438,232 @@ function generateBookingId() {
   } finally {
     lock.releaseLock(); // تحرير القفل دائماً
   }
+}
+
+/**
+ * يحسب لوحات التحكم الخاصة بالإحصائيات مباشرةً من شيت DATABASE.
+ * @param {string} startDate تاريخ البداية (yyyy-MM-dd).
+ * @param {string} endDate تاريخ النهاية (yyyy-MM-dd).
+ * @param {string} bookingId فلترة اختيارية برقم الحجز.
+ * @returns {Object} كائن يحتوي على جميع الأقسام المطلوبة للواجهة.
+ */
+function getCompleteAnalytics(startDate, endDate, bookingId) {
+  var sheet = ss.getSheetByName("DATABASE");
+  if (!sheet) {
+    return {};
+  }
+
+  var rows = sheet.getDataRange().getValues();
+  if (!rows || rows.length <= 1) {
+    return {};
+  }
+
+  // إزالة صف العناوين
+  rows.shift();
+
+  var start = parseFilterDate(startDate, true);
+  var end = parseFilterDate(endDate, false);
+  var bookingSearch = (bookingId || "").toString().trim().toLowerCase();
+
+  var COL = {
+    ID: 0,
+    SELLER: 1,
+    SUPPLIER: 2,
+    NATIONALITY: 5,
+    PERSON_COUNT: 6,
+    CITY: 7,
+    HOTEL: 8,
+    CHECKIN: 10,
+    CHECKOUT: 11,
+    ROOM_TYPE: 13,
+    MEAL: 15,
+    HOTEL_EURO_PRICE: 17,
+    SELLING_PRICE: 18,
+    SELLING_EURO_PRICE: 19,
+    CURRENCY: 20,
+    ARRIVED_EURO_AMOUNT: 25,
+    REMAINING_EURO_AMOUNT: 31,
+    SERVICE_EURO_PRICE: 38,
+    SERVICE_SELLING_EURO_PRICE: 40
+  };
+
+  var filteredRows = rows.filter(function (row) {
+    var matchesId = bookingSearch
+      ? ((row[COL.ID] || "").toString().toLowerCase().indexOf(bookingSearch) !== -1)
+      : true;
+
+    if (!matchesId) {
+      return false;
+    }
+
+    var checkInDate = parseSheetDate(row[COL.CHECKIN]);
+    if (start && (!checkInDate || checkInDate < start)) {
+      return false;
+    }
+    if (end && (!checkInDate || checkInDate > end)) {
+      return false;
+    }
+    return true;
+  });
+
+  if (!filteredRows.length) {
+    return {};
+  }
+
+  var analytics = {
+    financial: {
+      totalRevenue: 0,
+      totalCost: 0,
+      totalProfit: 0,
+      profitMargin: 0,
+      totalBookings: 0,
+      paidBookings: 0,
+      partiallyPaidBookings: 0,
+      unpaidBookings: 0,
+      totalCommission: 0,
+      currencyRevenue: {},
+      monthlyRevenue: {}
+    },
+    location: {
+      cityAnalytics: {},
+      hotelAnalytics: {},
+      nationalityAnalytics: {}
+    },
+    sales: {},
+    roomMeal: {
+      roomTypeAnalytics: {},
+      mealAnalytics: {}
+    },
+    lastUpdated: ""
+  };
+
+  filteredRows.forEach(function (row) {
+    var bookingRevenue = toNumber(row[COL.SELLING_EURO_PRICE]);
+    var bookingCost = toNumber(row[COL.HOTEL_EURO_PRICE]);
+    var commission = Math.max(
+      0,
+      toNumber(row[COL.SERVICE_SELLING_EURO_PRICE]) - toNumber(row[COL.SERVICE_EURO_PRICE])
+    );
+    var remainingEuro = toNumber(row[COL.REMAINING_EURO_AMOUNT]);
+    var paidEuro = toNumber(row[COL.ARRIVED_EURO_AMOUNT]);
+    var city = (row[COL.CITY] || "غير محدد").toString().trim();
+    var hotel = (row[COL.HOTEL] || "غير محدد").toString().trim();
+    var nationality = (row[COL.NATIONALITY] || "غير محدد").toString().trim();
+    var seller = (row[COL.SELLER] || "غير محدد").toString().trim();
+    var roomType = (row[COL.ROOM_TYPE] || "غير محدد").toString().trim();
+    var meal = (row[COL.MEAL] || "غير محدد").toString().trim();
+    var currency = (row[COL.CURRENCY] || "EUR").toString().trim().toUpperCase();
+    var localPrice = toNumber(row[COL.SELLING_PRICE]);
+    var guests = parseInt(row[COL.PERSON_COUNT], 10) || 0;
+    var checkInDate = parseSheetDate(row[COL.CHECKIN]);
+    var monthKey = checkInDate
+      ? Utilities.formatDate(checkInDate, Session.getScriptTimeZone(), "yyyy-MM")
+      : "غير محدد";
+
+    analytics.financial.totalRevenue += bookingRevenue;
+    analytics.financial.totalCost += bookingCost;
+    analytics.financial.totalCommission += commission;
+    analytics.financial.totalBookings += 1;
+    analytics.financial.currencyRevenue[currency] = (analytics.financial.currencyRevenue[currency] || 0) + localPrice;
+    analytics.financial.monthlyRevenue[monthKey] = (analytics.financial.monthlyRevenue[monthKey] || 0) + bookingRevenue;
+
+    if (remainingEuro <= 0 && bookingRevenue > 0) {
+      analytics.financial.paidBookings += 1;
+    } else if (paidEuro > 0 && remainingEuro > 0) {
+      analytics.financial.partiallyPaidBookings += 1;
+    } else {
+      analytics.financial.unpaidBookings += 1;
+    }
+
+    if (!analytics.location.cityAnalytics[city]) {
+      analytics.location.cityAnalytics[city] = { bookings: 0, revenue: 0, guests: 0 };
+    }
+    analytics.location.cityAnalytics[city].bookings += 1;
+    analytics.location.cityAnalytics[city].revenue += bookingRevenue;
+    analytics.location.cityAnalytics[city].guests += guests;
+
+    if (!analytics.location.hotelAnalytics[hotel]) {
+      analytics.location.hotelAnalytics[hotel] = { bookings: 0, revenue: 0, guests: 0 };
+    }
+    analytics.location.hotelAnalytics[hotel].bookings += 1;
+    analytics.location.hotelAnalytics[hotel].revenue += bookingRevenue;
+    analytics.location.hotelAnalytics[hotel].guests += guests;
+
+    if (!analytics.location.nationalityAnalytics[nationality]) {
+      analytics.location.nationalityAnalytics[nationality] = { bookings: 0, revenue: 0 };
+    }
+    analytics.location.nationalityAnalytics[nationality].bookings += 1;
+    analytics.location.nationalityAnalytics[nationality].revenue += bookingRevenue;
+
+    if (!analytics.sales[seller]) {
+      analytics.sales[seller] = { bookings: 0, revenue: 0, cost: 0, profit: 0, avgBookingValue: 0 };
+    }
+    analytics.sales[seller].bookings += 1;
+    analytics.sales[seller].revenue += bookingRevenue;
+    analytics.sales[seller].cost += bookingCost;
+    analytics.sales[seller].profit = analytics.sales[seller].revenue - analytics.sales[seller].cost;
+
+    if (!analytics.roomMeal.roomTypeAnalytics[roomType]) {
+      analytics.roomMeal.roomTypeAnalytics[roomType] = { bookings: 0 };
+    }
+    analytics.roomMeal.roomTypeAnalytics[roomType].bookings += 1;
+
+    if (!analytics.roomMeal.mealAnalytics[meal]) {
+      analytics.roomMeal.mealAnalytics[meal] = { bookings: 0 };
+    }
+    analytics.roomMeal.mealAnalytics[meal].bookings += 1;
+  });
+
+  analytics.financial.totalProfit = analytics.financial.totalRevenue - analytics.financial.totalCost;
+  analytics.financial.profitMargin = analytics.financial.totalRevenue > 0
+    ? Math.round((analytics.financial.totalProfit / analytics.financial.totalRevenue) * 1000) / 10
+    : 0;
+
+  Object.keys(analytics.sales).forEach(function (sellerKey) {
+    var sellerData = analytics.sales[sellerKey];
+    sellerData.avgBookingValue = sellerData.bookings > 0
+      ? Math.round((sellerData.revenue / sellerData.bookings) * 100) / 100
+      : 0;
+  });
+
+  analytics.lastUpdated = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "yyyy-MM-dd HH:mm");
+  return analytics;
+}
+
+function toNumber(value) {
+  if (value === null || value === "" || typeof value === "undefined") {
+    return 0;
+  }
+  if (typeof value === "number") {
+    return value;
+  }
+  var parsed = parseFloat(value.toString().replace(/[^\d\.\-]/g, ""));
+  return isNaN(parsed) ? 0 : parsed;
+}
+
+function parseSheetDate(value) {
+  if (!value) {
+    return null;
+  }
+  if (value instanceof Date) {
+    return value;
+  }
+  var parsed = new Date(value);
+  return isNaN(parsed.getTime()) ? null : parsed;
+}
+
+function parseFilterDate(value, isStartOfDay) {
+  if (!value) {
+    return null;
+  }
+  var parsed = new Date(value);
+  if (isNaN(parsed.getTime())) {
+    return null;
+  }
+  if (isStartOfDay) {
+    parsed.setHours(0, 0, 0, 0);
+  } else {
+    parsed.setHours(23, 59, 59, 999);
+  }
+  return parsed;
 }
