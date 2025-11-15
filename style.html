@@ -1,0 +1,161 @@
+<script>
+  // Show loader
+  function showLoader() {
+    document.getElementById("loader").style.display = "block";
+  }
+
+  // Hide loader
+  function hideLoader() {
+    document.getElementById("loader").style.display = "none";
+  }
+
+  // Populate select
+  function populateSelect(selectId, data) {
+    var select = document.getElementById(selectId);
+    select.innerHTML = '<option value="">اختر...</option>';
+    data.forEach(function(item) {
+      select.innerHTML += '<option value="' + item[0] + '">' + item[0] + '</option>';
+    });
+  }
+
+  // Populate hotels based on city
+  function populateHotels(city) {
+    showLoader();
+    google.script.run.withSuccessHandler(function(hotels) {
+      populateSelect("hotel", hotels.map(function(hotelName) { return [hotelName]; })); // Adapt to populateSelect format
+      hideLoader();
+    }).withFailureHandler(function(error) {
+      Swal.fire('Error', error.message, 'error');
+      hideLoader();
+    }).getHotelsByCity(city);
+  }
+
+  // Event Listeners
+  document.addEventListener("DOMContentLoaded", function() {
+    showLoader();
+    google.script.run.withSuccessHandler(function(data) {
+      populateSelect("supplier", data);
+      google.script.run.withSuccessHandler(function(data) {
+        populateSelect("client_name", data); // Assuming client name is first column
+        google.script.run.withSuccessHandler(function(data) {
+          populateSelect("city", data);
+          hideLoader();
+        }).getCity();
+      }).getClients();
+    }).getSuppliers();
+
+    // City change listener
+    $("#city").change(function() {
+      var selectedCity = $(this).val();
+      if (selectedCity) {
+        populateHotels(selectedCity);
+      } else {
+        populateSelect("hotel", []); // Clear hotels
+      }
+    });
+
+    // Date change listener for nights calculation
+    $("#check_in, #check_out").change(function() {
+      var checkIn = new Date($("#check_in").val());
+      var checkOut = new Date($("#check_out").val());
+      if (checkIn && checkOut && checkOut > checkIn) {
+        var diffTime = Math.abs(checkOut - checkIn);
+        var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        $("#nights").val(diffDays);
+      } else {
+        $("#nights").val(0);
+      }
+    });
+
+    // ----------------------------------------------------
+    // *** !! هذا هو الكود الذي تم تعديله بالكامل !! ***
+    // ----------------------------------------------------
+    $("#saveBooking").click(function() {
+      
+      // 1. جمع البيانات من النموذج (كما في الكود الأصلي)
+      var bookingDetails = {
+        supplier: $("#supplier").val(),
+        supplierName: $("#supplier_name").val(), // يفترض أن هذا ID موجود
+        supplierType: $("#supplier_type").val(), // يفترض أن هذا ID موجود
+        supplierRef: $("#ref_supp").val(),
+        clientName: $("#client_name").val(),
+        clientPhone: $("#client_phone").val(), // يفترض أن هذا ID موجود
+        clientNationality: $("#nationality").val(),
+        adults: $("#adults").val(),
+        children: $("#children").val(),
+        city: $("#city").val(),
+        hotel: $("#hotel").val(),
+        hotelRef: $("#ref_hotel").val(),
+        roomType: $("#room_type").val(), // يفترض أن هذا ID موجود
+        mealPlan: $("#meal_plan").val(), // يفترض أن هذا ID موجود
+        checkIn: $("#check_in").val(),
+        checkOut: $("#check_out").val(),
+        nights: $("#nights").val(),
+        notes: $("#notes").val()
+      };
+      
+      // (تحقق بسيط)
+      if (!bookingDetails.clientName || !bookingDetails.hotel || !bookingDetails.checkIn) {
+         Swal.fire('خطأ', 'الرجاء ملء الحقول الأساسية (العميل، الفندق، تاريخ الوصول)', 'warning');
+         return;
+      }
+
+      // 2. إظهار نافذة منبثقة لطلب الإيميل والملاحظات
+      Swal.fire({
+        title: 'إرسال تأكيد عبر الإيميل',
+        html:
+          '<p>الحجز سيتم حفظه. هل تريد إرسال إيميل تأكيد؟</p>' +
+          
+          // *** !! هام جداً !! ***
+          // أنت طلبت أن تكون هذه "قائمة منسدلة".
+          // يجب عليك تعديل هذه القائمة لجلب الإيميلات من Google Sheet
+          // بنفس الطريقة التي تجلب بها "العملاء" أو "الموردين".
+          // هذا مجرد مثال ثابت للتوضيح:
+          '<select id="swal-email" class="form-select">' +
+            '<option value="">-- عدم الإرسال --</option>' +
+            '<option value="info@hotel-example.com">إيميل المورد 1</option>' +
+            '<option value="manager@hotel-example.com">إيميل المورد 2</option>' +
+            '<option value="accounts@your-tourism-company.com">قسم الحسابات</option>' +
+          '</select>' +
+          
+          '<textarea id="swal-notes" class="form-control mt-2" placeholder="ملاحظات إضافية (ستظهر في نص الإيميل)..."></textarea>',
+          
+        showCancelButton: true,
+        confirmButtonText: 'حفظ وإرسال',
+        cancelButtonText: 'إلغاء',
+        showLoaderOnConfirm: true,
+        
+        preConfirm: () => {
+          // 3. جمع البيانات من النافذة المنبثقة
+          var email = document.getElementById('swal-email').value;
+          var notes = document.getElementById('swal-notes').value;
+          
+          showLoader(); // إظهار المؤشر الرئيسي
+
+          // 4. استدعاء دالة الخادم (مع الإيميل والملاحظات)
+          return google.script.run
+            .withSuccessHandler(function(response) {
+              hideLoader();
+              Swal.fire('تم!', response, 'success');
+              
+              // إعادة تعيين النموذج (افترض أن لديك <form id="bookingForm">)
+              if(document.getElementById("bookingForm")) {
+                document.getElementById("bookingForm").reset();
+              }
+              populateSelect("hotel", []); // مسح الفنادق
+            })
+            .withFailureHandler(function(error) {
+              hideLoader();
+              Swal.fire('خطأ!', error.message, 'error');
+            })
+            .addNewBooking(bookingDetails, email, notes); // !! إرسال البيانات كاملة
+        },
+        allowOutsideClick: () => !Swal.isLoading()
+      });
+    });
+    // ----------------------------------------------------
+    // *** !! نهاية الكود المُعدل !! ***
+    // ----------------------------------------------------
+
+  });
+</script>
