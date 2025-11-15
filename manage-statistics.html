@@ -1,0 +1,967 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحليلات نظام الحجوزات</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+
+        .filters {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr auto;
+            gap: 20px;
+            align-items: end;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-group label {
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .filter-group input {
+            padding: 12px 15px;
+            border: 2px solid #e0e6ed;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .filter-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            height: fit-content;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+            font-size: 1.2rem;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .analytics-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .analytics-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin-left: 15px;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f3f7;
+        }
+
+        .metric-row:last-child {
+            border-bottom: none;
+        }
+
+        .metric-label {
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+
+        .metric-value {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #2c3e50;
+        }
+
+        .metric-value.positive {
+            color: #27ae60;
+        }
+
+        .metric-value.negative {
+            color: #e74c3c;
+        }
+
+        .chart-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .chart-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .chart-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+        }
+
+        .table-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .table th {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 10px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .table td {
+            padding: 12px 10px;
+            text-align: center;
+            border-bottom: 1px solid #f0f3f7;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+
+        .last-updated {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-top: 20px;
+        }
+
+        /* الألوان للكاردات */
+        .revenue-card .card-icon { background: linear-gradient(45deg, #27ae60, #2ecc71); color: white; }
+        .bookings-card .card-icon { background: linear-gradient(45deg, #3498db, #5dade2); color: white; }
+        .profit-card .card-icon { background: linear-gradient(45deg, #f39c12, #f7dc6f); color: white; }
+        .commission-card .card-icon { background: linear-gradient(45deg, #9b59b6, #bb8fce); color: white; }
+
+        @media (max-width: 768px) {
+            .filter-row {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .analytics-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- الهيدر -->
+        <div class="header">
+            <h1>🏨 تحليلات نظام الحجوزات</h1>
+            <p>لوحة تحكم شاملة لمتابعة الأداء والإيرادات</p>
+        </div>
+
+        <!-- الفلاتر -->
+        <div class="filters">
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label>من تاريخ</label>
+                    <input type="date" id="startDate">
+                </div>
+                <div class="filter-group">
+                    <label>إلى تاريخ</label>
+                    <input type="date" id="endDate">
+                </div>
+                <div class="filter-group">
+                    <label>رقم الحجز</label>
+                    <input type="text" id="bookingId" placeholder="ادخل رقم الحجز">
+                </div>
+                <div class="filter-group">
+                    <label>&nbsp;</label>
+                    <button class="btn-primary" onclick="loadAnalytics()">
+                        🔍 تحليل البيانات
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- حالة التحميل -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>جاري تحليل البيانات...</p>
+        </div>
+
+        <!-- المؤشرات الرئيسية -->
+        <div class="analytics-grid" id="kpiCards" style="display: none;">
+            <!-- سيتم ملء هذا القسم بالـ JavaScript -->
+        </div>
+
+        <!-- الرسوم البيانية -->
+        <div class="charts-grid" id="chartsContainer" style="display: none;">
+            <!-- سيتم ملء هذا القسم بالـ JavaScript -->
+        </div>
+
+        <!-- الجداول -->
+        <div id="tablesContainer" style="display: none;">
+            <!-- سيتم ملء هذا القسم بالـ JavaScript -->
+        </div>
+
+        <!-- آخر تحديث -->
+        <div class="last-updated" id="lastUpdated" style="display: none;">
+            <!-- سيتم ملء هذا القسم بالـ JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        // متغيرات عامة
+        let currentAnalytics = null;
+        let charts = {};
+
+        // تحميل البيانات عند فتح الصفحة
+        window.onload = function() {
+            // تعيين التاريخ الافتراضي (آخر 30 يوم)
+            const today = new Date();
+            const thirtyDaysAgo = new Date(today.getTime() - (30 * 24 * 60 * 60 * 1000));
+            
+            document.getElementById('endDate').value = today.toISOString().split('T')[0];
+            document.getElementById('startDate').value = thirtyDaysAgo.toISOString().split('T')[0];
+            
+            // تحميل البيانات الافتراضية
+            loadAnalytics();
+        };
+
+        // تحميل التحليلات
+        function loadAnalytics() {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const bookingId = document.getElementById('bookingId').value;
+
+            // إظهار حالة التحميل
+            document.getElementById('loading').style.display = 'block';
+            hideAllSections();
+
+            // استدعاء دالة Google Apps Script
+            google.script.run
+                .withSuccessHandler(onAnalyticsSuccess)
+                .withFailureHandler(onAnalyticsError)
+                .getCompleteAnalytics(startDate, endDate, bookingId);
+        }
+
+        // نجاح تحميل البيانات
+        function onAnalyticsSuccess(analytics) {
+            currentAnalytics = analytics;
+            document.getElementById('loading').style.display = 'none';
+            
+            if (analytics && Object.keys(analytics).length > 0) {
+                displayKPICards(analytics.financial);
+                displayCharts(analytics);
+                displayTables(analytics);
+                displayLastUpdated(analytics.lastUpdated);
+                showAllSections();
+            } else {
+                showNoDataMessage();
+            }
+        }
+
+        // فشل تحميل البيانات
+        function onAnalyticsError(error) {
+            document.getElementById('loading').style.display = 'none';
+            console.error('خطأ في تحميل البيانات:', error);
+            alert('حدث خطأ في تحميل البيانات. يرجى المحاولة مرة أخرى.');
+        }
+
+        // إخفاء جميع الأقسام
+        function hideAllSections() {
+            document.getElementById('kpiCards').style.display = 'none';
+            document.getElementById('chartsContainer').style.display = 'none';
+            document.getElementById('tablesContainer').style.display = 'none';
+            document.getElementById('lastUpdated').style.display = 'none';
+        }
+
+        // إظهار جميع الأقسام
+        function showAllSections() {
+            document.getElementById('kpiCards').style.display = 'grid';
+            document.getElementById('chartsContainer').style.display = 'grid';
+            document.getElementById('tablesContainer').style.display = 'block';
+            document.getElementById('lastUpdated').style.display = 'block';
+        }
+
+        // عرض رسالة عدم وجود بيانات
+        function showNoDataMessage() {
+            document.getElementById('kpiCards').innerHTML = `
+                <div class="no-data">
+                    <h3>لا توجد بيانات للعرض</h3>
+                    <p>يرجى التأكد من التواريخ المحددة أو رقم الحجز</p>
+                </div>
+            `;
+            document.getElementById('kpiCards').style.display = 'block';
+        }
+
+        // عرض المؤشرات الرئيسية
+        function displayKPICards(financial) {
+            const kpiCards = document.getElementById('kpiCards');
+            
+            kpiCards.innerHTML = `
+                <div class="analytics-card revenue-card">
+                    <div class="card-header">
+                        <div class="card-icon">💰</div>
+                        <div class="card-title">الإيرادات الإجمالية</div>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">إجمالي المبيعات</span>
+                        <span class="metric-value positive">€${financial.totalRevenue?.toLocaleString() || 0}</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">إجمالي التكلفة</span>
+                        <span class="metric-value">€${financial.totalCost?.toLocaleString() || 0}</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">صافي الربح</span>
+                        <span class="metric-value ${financial.totalProfit >= 0 ? 'positive' : 'negative'}">€${financial.totalProfit?.toLocaleString() || 0}</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">هامش الربح</span>
+                        <span class="metric-value ${financial.profitMargin >= 0 ? 'positive' : 'negative'}">${financial.profitMargin || 0}%</span>
+                    </div>
+                </div>
+
+                <div class="analytics-card bookings-card">
+                    <div class="card-header">
+                        <div class="card-icon">📊</div>
+                        <div class="card-title">إحصائيات الحجوزات</div>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">إجمالي الحجوزات</span>
+                        <span class="metric-value">${financial.totalBookings || 0}</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">حجوزات مدفوعة</span>
+                        <span class="metric-value positive">${financial.paidBookings || 0}</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">حجوزات مدفوعة جزئياً</span>
+                        <span class="metric-value">${financial.partiallyPaidBookings || 0}</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">حجوزات غير مدفوعة</span>
+                        <span class="metric-value negative">${financial.unpaidBookings || 0}</span>
+                    </div>
+                </div>
+
+                <div class="analytics-card profit-card">
+                    <div class="card-header">
+                        <div class="card-icon">📈</div>
+                        <div class="card-title">تحليل الأداء</div>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">متوسط قيمة الحجز</span>
+                        <span class="metric-value">€${financial.totalBookings > 0 ? Math.round((financial.totalRevenue / financial.totalBookings) * 100) / 100 : 0}</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">معدل الدفع</span>
+                        <span class="metric-value">${financial.totalBookings > 0 ? Math.round((financial.paidBookings / financial.totalBookings) * 100) : 0}%</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">إجمالي العمولات</span>
+                        <span class="metric-value">€${financial.totalCommission?.toLocaleString() || 0}</span>
+                    </div>
+                </div>
+
+                <div class="analytics-card commission-card">
+                    <div class="card-header">
+                        <div class="card-icon">💳</div>
+                        <div class="card-title">توزيع العملات</div>
+                    </div>
+                    ${Object.entries(financial.currencyRevenue || {}).map(([currency, amount]) => `
+                        <div class="metric-row">
+                            <span class="metric-label">${currency}</span>
+                            <span class="metric-value">${amount.toLocaleString()}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // عرض الرسوم البيانية
+        function displayCharts(analytics) {
+            const chartsContainer = document.getElementById('chartsContainer');
+            
+            // تدمير الرسوم البيانية السابقة
+            Object.values(charts).forEach(chart => {
+                if (chart) chart.destroy();
+            });
+            charts = {};
+            
+            chartsContainer.innerHTML = `
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <div class="chart-title">📊 الإيرادات الشهرية</div>
+                    </div>
+                    <canvas id="monthlyRevenueChart" width="400" height="200"></canvas>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <div class="chart-title">🏙️ أفضل المدن</div>
+                    </div>
+                    <canvas id="cityChart" width="400" height="200"></canvas>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <div class="chart-title">🏨 أفضل الفنادق</div>
+                    </div>
+                    <canvas id="hotelChart" width="400" height="200"></canvas>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <div class="chart-title">🌍 توزيع الجنسيات</div>
+                    </div>
+                    <canvas id="nationalityChart" width="400" height="200"></canvas>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <div class="chart-title">💼 أداء البائعين</div>
+                    </div>
+                    <canvas id="sellersChart" width="400" height="200"></canvas>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <div class="chart-title">🛏️ أنواع الغرف</div>
+                    </div>
+                    <canvas id="roomTypeChart" width="400" height="200"></canvas>
+                </div>
+            `;
+
+            // رسم الإيرادات الشهرية
+            setTimeout(() => createMonthlyRevenueChart(analytics.financial.monthlyRevenue), 100);
+            
+            // رسم المدن
+            setTimeout(() => createCityChart(analytics.location.cityAnalytics), 200);
+            
+            // رسم الفنادق
+            setTimeout(() => createHotelChart(analytics.location.hotelAnalytics), 300);
+            
+            // رسم الجنسيات
+            setTimeout(() => createNationalityChart(analytics.location.nationalityAnalytics), 400);
+            
+            // رسم البائعين
+            setTimeout(() => createSellersChart(analytics.sales), 500);
+            
+            // رسم أنواع الغرف
+            setTimeout(() => createRoomTypeChart(analytics.roomMeal.roomTypeAnalytics), 600);
+        }
+
+        // إنشاء رسم الإيرادات الشهرية
+        function createMonthlyRevenueChart(monthlyData) {
+            const ctx = document.getElementById('monthlyRevenueChart');
+            if (!ctx) return;
+
+            const sortedMonths = Object.keys(monthlyData || {}).sort();
+            const data = sortedMonths.map(month => monthlyData[month]);
+            
+            charts.monthlyRevenue = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: sortedMonths.map(month => {
+                        const [year, monthNum] = month.split('-');
+                        return `${monthNum}/${year}`;
+                    }),
+                    datasets: [{
+                        label: 'الإيرادات (€)',
+                        data: data,
+                        borderColor: 'rgb(102, 126, 234)',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '€' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // إنشاء رسم المدن
+        function createCityChart(cityData) {
+            const ctx = document.getElementById('cityChart');
+            if (!ctx) return;
+
+            const cities = Object.keys(cityData || {});
+            const revenues = cities.map(city => cityData[city].revenue);
+            
+            charts.city = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: cities,
+                    datasets: [{
+                        data: revenues,
+                        backgroundColor: [
+                            '#FF6384',
+                            '#36A2EB',
+                            '#FFCE56',
+                            '#4BC0C0',
+                            '#9966FF',
+                            '#FF9F40'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        // إنشاء رسم الفنادق
+        function createHotelChart(hotelData) {
+            const ctx = document.getElementById('hotelChart');
+            if (!ctx) return;
+
+            const hotels = Object.keys(hotelData || {}).slice(0, 10); // أفضل 10 فنادق
+            const revenues = hotels.map(hotel => hotelData[hotel].revenue);
+            
+            charts.hotel = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: hotels.map(hotel => hotel.length > 15 ? hotel.substring(0, 15) + '...' : hotel),
+                    datasets: [{
+                        label: 'الإيرادات (€)',
+                        data: revenues,
+                        backgroundColor: 'rgba(102, 126, 234, 0.8)',
+                        borderColor: 'rgb(102, 126, 234)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '€' + value.toLocaleString();
+                                }
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                maxRotation: 45
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // إنشاء رسم الجنسيات
+        function createNationalityChart(nationalityData) {
+            const ctx = document.getElementById('nationalityChart');
+            if (!ctx) return;
+
+            const nationalities = Object.keys(nationalityData || {});
+            const bookings = nationalities.map(nationality => nationalityData[nationality].bookings);
+            
+            charts.nationality = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: nationalities,
+                    datasets: [{
+                        data: bookings,
+                        backgroundColor: [
+                            '#FF6384',
+                            '#36A2EB',
+                            '#FFCE56',
+                            '#4BC0C0',
+                            '#9966FF',
+                            '#FF9F40',
+                            '#FF6384',
+                            '#C9CBCF'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        // إنشاء رسم البائعين
+        function createSellersChart(sellersData) {
+            const ctx = document.getElementById('sellersChart');
+            if (!ctx) return;
+
+            const sellers = Object.keys(sellersData || {}).slice(0, 8); // أفضل 8 بائعين
+            const revenues = sellers.map(seller => sellersData[seller].revenue);
+            
+            charts.sellers = new Chart(ctx, {
+                type: 'horizontalBar',
+                data: {
+                    labels: sellers.map(seller => seller.split('@')[0]), // إزالة @domain.com
+                    datasets: [{
+                        label: 'الإيرادات (€)',
+                        data: revenues,
+                        backgroundColor: 'rgba(153, 102, 255, 0.8)',
+                        borderColor: 'rgb(153, 102, 255)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '€' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // إنشاء رسم أنواع الغرف
+        function createRoomTypeChart(roomTypeData) {
+            const ctx = document.getElementById('roomTypeChart');
+            if (!ctx) return;
+
+            const roomTypes = Object.keys(roomTypeData || {});
+            const bookings = roomTypes.map(type => roomTypeData[type].bookings);
+            
+            charts.roomType = new Chart(ctx, {
+                type: 'polarArea',
+                data: {
+                    labels: roomTypes,
+                    datasets: [{
+                        data: bookings,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.8)',
+                            'rgba(54, 162, 235, 0.8)',
+                            'rgba(255, 205, 86, 0.8)',
+                            'rgba(75, 192, 192, 0.8)',
+                            'rgba(153, 102, 255, 0.8)',
+                            'rgba(255, 159, 64, 0.8)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        // عرض الجداول
+        function displayTables(analytics) {
+            const tablesContainer = document.getElementById('tablesContainer');
+            
+            tablesContainer.innerHTML = `
+                <div class="table-container">
+                    <div class="chart-header">
+                        <div class="chart-title">🏙️ تفاصيل أداء المدن</div>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>المدينة</th>
+                                <th>عدد الحجوزات</th>
+                                <th>الإيرادات (€)</th>
+                                <th>عدد النزلاء</th>
+                                <th>متوسط قيمة الحجز</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${Object.entries(analytics.location.cityAnalytics || {})
+                                .sort((a, b) => b[1].revenue - a[1].revenue)
+                                .map(([city, data]) => `
+                                    <tr>
+                                        <td>${city}</td>
+                                        <td>${data.bookings}</td>
+                                        <td>€${data.revenue.toLocaleString()}</td>
+                                        <td>${data.guests}</td>
+                                        <td>€${Math.round((data.revenue / data.bookings) * 100) / 100}</td>
+                                    </tr>
+                                `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="table-container">
+                    <div class="chart-header">
+                        <div class="chart-title">🏨 تفاصيل أداء الفنادق</div>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>الفندق</th>
+                                <th>عدد الحجوزات</th>
+                                <th>الإيرادات (€)</th>
+                                <th>عدد النزلاء</th>
+                                <th>متوسط قيمة الحجز</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${Object.entries(analytics.location.hotelAnalytics || {})
+                                .sort((a, b) => b[1].revenue - a[1].revenue)
+                                .slice(0, 15) // أفضل 15 فندق
+                                .map(([hotel, data]) => `
+                                    <tr>
+                                        <td>${hotel}</td>
+                                        <td>${data.bookings}</td>
+                                        <td>€${data.revenue.toLocaleString()}</td>
+                                        <td>${data.guests}</td>
+                                        <td>€${Math.round((data.revenue / data.bookings) * 100) / 100}</td>
+                                    </tr>
+                                `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="table-container">
+                    <div class="chart-header">
+                        <div class="chart-title">💼 تفاصيل أداء البائعين</div>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>البائع</th>
+                                <th>عدد الحجوزات</th>
+                                <th>الإيرادات (€)</th>
+                                <th>الأرباح (€)</th>
+                                <th>متوسط قيمة الحجز</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${Object.entries(analytics.sales || {})
+                                .sort((a, b) => b[1].revenue - a[1].revenue)
+                                .map(([seller, data]) => `
+                                    <tr>
+                                        <td>${seller}</td>
+                                        <td>${data.bookings}</td>
+                                        <td>€${data.revenue.toLocaleString()}</td>
+                                        <td class="${data.profit >= 0 ? 'positive' : 'negative'}">€${data.profit.toLocaleString()}</td>
+                                        <td>€${Math.round(data.avgBookingValue * 100) / 100}</td>
+                                    </tr>
+                                `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        // عرض آخر تحديث
+        function displayLastUpdated(lastUpdated) {
+            const lastUpdatedElement = document.getElementById('lastUpdated');
+            lastUpdatedElement.innerHTML = `آخر تحديث: ${lastUpdated}`;
+        }
+
+        // دالة للتصدير إلى PDF (يمكن إضافتها لاحقاً)
+        function exportToPDF() {
+            alert('سيتم إضافة ميزة التصدير قريباً');
+        }
+
+        // دالة للتصدير إلى Excel (يمكن إضافتها لاحقاً)
+        function exportToExcel() {
+            alert('سيتم إضافة ميزة التصدير قريباً');
+        }
+    </script>
+</body>
+</html>
