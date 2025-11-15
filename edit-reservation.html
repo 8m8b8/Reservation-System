@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+  <title>Ghada Tourism</title>
+  <base target="_top">
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+
+  <?!= include("29lt_bukrabold"); ?>
+  <?!= include("style"); ?>
+
+</head>
+
+
+<body dir="rtl">
+  <!-- شريط التنقل -->
+  <nav class="navbar navbar-expand-md bg-body navbar-dark" id="app-navbar"
+    style="padding-bottom: 0px;margin-bottom: 20px;padding-top: 0px;">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="javascript:void(0)">
+        <img src="https://i.ibb.co/179ng0p/IMG-1995.png" height="70"
+          style="padding-left: 0px;padding-bottom: 0px;margin-bottom: 0px;" loading="lazy">
+      </a>
+      <button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-1">
+        <span class="visually-hidden">القائمة</span>
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navcol-1">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item"><a class="nav-link" href="javascript:void(0)" onclick="navigateTo('index')">إضافة حجز</a>
+          </li>
+          <li class="nav-item"><a class="nav-link" href="javascript:void(0)" onclick="navigateTo('add-tour')">إضافة
+              رحلة</a></li>
+          <li class="nav-item"><a class="nav-link" href="javascript:void(0)"
+              onclick="navigateTo('manage-reservations')">إدارة الحجوزات</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container-lg px-0" id="content">
+    <div>
+      <form id="registration-form">
+        <div class="form-group mb-3 bg-white">
+          <div id="formdiv" class="mx-0">
+            <!-- معلومات البائع -->
+            <div class="row pt-4">
+              <div class="col-md-12">
+                <h1 class="text-center fw-bold" style="color: rgb(0,136,145);font-size: 20px;line-height: 50px;">
+                  <strong><span style="background-color: rgb(255, 255, 255);">معلومات البائع</span></strong>
+                </h1>
+              </div>
+            </div>
+
+            <div class="row mx-0 px-2 py-3">
+              <div class="col-12 col-md-9 mx-auto">
+                <p class="mb-2"><strong>اسم البائع</strong></p>
+                <select class="form-select mb-4" name="seller" id="sellerSelect" required></select>
+
+                <p class="mb-2"><strong>المورد</strong></p>
+                <select class="form-select mb-4" name="supplier" id="supplierSelect" required></select>
+              </div>
+            </div>
+            <!-- معلومات العميل -->
+            <div class="row pt-4">
+              <div class="col-md-12">
+                <h1 class="text-center fw-bold" style="color: rgb(0,136,145);font-size: 20px;line-height: 50px;">
+                  <strong><span>معلومات العميل</span></strong>
+                </h1>
+              </div>
+            </div>
+
+            <div class="row mx-0 px-2 py-3">
+              <div class="col-12 col-md-9 mx-auto">
+                <p class="mb-2"><strong>اسم العميل</strong></p>
+                <input class="form-control mb-4" type="text" name="name" required placeholder="أدخل اسم العميل">
+
+                <p class="mb-2"><strong>رقم الهاتف</strong></p>
+                <input class="form-control mb-4" type="text" name="phone" placeholder="أدخل رقم الهاتف">
+
+                <p class="mb-2"><strong>الجنسية</strong></p>
+                <select class="form-select mb-4" name="nationality" id="nationalitySelect" required></select>
+
+                <p class="mb-2"><strong>عدد الأشخاص</strong></p>
+                <select class="form-select mb-4" name="personCount" id="personSelect" required></select>
+              </div>
+            </div>
+
+            <!-- معلومات الفندق -->
+            <div class="row pt-4">
+              <div class="col-md-12">
+                <h1 class="text-center fw-bold" style="color: rgb(0,136,145);font-size: 20px;line-height: 50px;">
+                  <strong><span>معلومات الفندق</span></strong>
+                </h1>
+              </div>
+            </div>
+
+            <div class="row mx-0 px-2 py-3">
+              <div class="col-12 col-md-9 mx-auto gy-3">
+                <p class="mb-2"><strong>المدينة</strong></p>
+                <select class="form-select mb-4" name="city" id="citySelect" onchange="onCityChange()"
+                  required></select>
+
+                <p class="mb-2"><strong>الفندق</strong></p>
+                <select class="form-select mb-4" name="hotel" id="hotelSelect" required></select>
+
+                <p class="mb-2"><strong>ايدي تأكيد حجز الفندق</strong></p>
+                <input class="form-control mb-4" name="HotelConformation" type="text" required placeholder="رقم الحجز" inputmode="decimal"/>
+
+                <p class="mb-2"><strong>تاريخ الوصول</strong></p>
+                <input class="form-control mb-4" type="date" name="chekInDate">
+
+                <p class="mb-2"><strong>تاريخ المغادرة</strong></p>
+                <input class="form-control mb-4" type="date" name="chekOutDate">
+
+                <p class="mb-2"><strong>عدد الغرف</strong></p>
+                <select class="form-select mb-4" name="roomCount" id="numberSelect" required></select>
+
+                <p class="mb-2"><strong>نوع الغرفة</strong></p>
+                <select class="form-select mb-4" name="roomType" id="roomSelect" required></select>
+
+                <p class="mb-2"><strong>نوع الإطلالة</strong></p>
+                <select class="form-select mb-4" name="viewType" id="viewSelect" required></select>
+
+                <p class="mb-2"><strong>الوجبات</strong></p>
+                <select class="form-select mb-4" name="meal" id="mealSelect" required></select>
+              </div>
+            </div>
+
+
+
+            <!-- المعلومات المالية -->
+            <div class="row pt-4">
+              <div class="col-md-12">
+                <h1 class="text-center fw-bold" style="color: rgb(0,136,145);font-size: 20px;line-height: 50px;">
+                  <strong><span>المعلومات المالية</span></strong>
+                </h1>
+              </div>
+            </div>
+
+            <div class="row mx-0 px-2 py-3">
+              <div class="col-12 col-md-9 mx-auto">
+                <p class="mb-2"><strong>سعر الفندق</strong></p>
+                <input class="form-control mb-4" name="hotelPrice" type="text" required placeholder="سعر الفندق"
+                  inputmode="decimal">
+                <input class="form-control mb-4" name="hotelEuroPrice" type="text" required
+                  placeholder="سعر الفندق باليورو €" inputmode="decimal">
+
+                <p class="mb-2"><strong>سعر البيع</strong></p>
+                <input class="form-control mb-4" name="sellingPrice" type="text" required placeholder="سعر البيع"
+                  inputmode="decimal">
+                <input class="form-control mb-4" name="sellingEuroPrice" type="text" required
+                  placeholder="سعر البيع باليورو €" inputmode="decimal">
+
+                <p class="mb-2"><strong>نوع العملة</strong></p>
+                <select class="form-select mb-4" name="hotelCurrency" id="currencySelect1" required></select>
+
+                <p class="mb-2"><strong>الضريبة</strong></p>
+                <select class="form-select mb-4" name="kdv" id="kdvSelect" required></select>
+
+                <p class="mb-2"><strong>عمولة الفندق</strong></p>
+                <input class="form-control mb-4" name="hotelComm" type="text" placeholder="أدخل عمولة الفندق"
+                  inputmode="decimal">
+
+                <p class="mb-2"><strong>نسبة عمولة الفندق %</strong></p>
+                <input class="form-control mb-4" name="hotelCommPrc" type="text" placeholder="أدخل عمولة الفندق %"
+                  inputmode="decimal">
+
+                <p class="mb-2"><strong>المبلغ المرسل</strong></p>
+                <input class="form-control mb-4" name="amountSent" required type="text" placeholder="المبلغ المرسل"
+                  inputmode="decimal">
+                <input class="form-control mb-4" name="amountEuroSent" required type="text"
+                  placeholder="المبلغ المرسل باليورو €" inputmode="decimal">
+
+                  
+                <p class="mb-2"><strong>طريقة استلام العربون</strong></p>
+                <select class="form-select mb-4" name="ra3bon" id="ra3bonSelect" required></select>
+
+                <p class="mb-2"><strong>تكاليف الإرسال</strong></p>
+                <input class="form-control mb-4" name="arrivedAmount" type="text" placeholder="تكاليف الإرسال"
+                  inputmode="decimal">
+                <input class="form-control mb-4" name="arrivedEuroAmount" type="text"
+                  placeholder="تكاليف الإرسال باليورو €" inputmode="decimal">
+
+                <p class="mb-2"><strong>نوع العملة</strong></p>
+                <select class="form-select mb-4" name="amountSentCurrency" id="currencySelect2" required></select>
+
+                <p class="mb-2"><strong>المبلغ المتبقي</strong></p>
+                <input class="form-control mb-4" name="remainingAmount" type="text" placeholder="المبلغ المتبقي"
+                  inputmode="decimal">
+                <input class="form-control mb-4" name="remainingEuroAmount" type="text"
+                  placeholder="المبلغ المتبقي باليورو €" inputmode="decimal">
+
+                <p class="mb-2"><strong>نوع العملة</strong></p>
+                <select class="form-select mb-4" name="amountRemainingCurrency" id="currencySelect3" required></select>
+
+                <p class="mb-2"><strong>حالة الحجز</strong></p>
+                <select class="form-select mb-4" name="reservationState" id="reservationSelect" required></select>
+
+                <p class="mb-2"><strong>طريقة التحصيل</strong></p>
+                <select class="form-select mb-4" name="collectionMethod" id="collectionSelect" required></select>
+
+                <p class="mb-2"><strong>ملاحظات</strong></p>
+                <textarea class="form-control mb-4" style="font-size:14px;" placeholder="أدخل ملاحظاتك هنا"
+                  name="note"></textarea>
+
+              </div>
+            </div>
+            <!-- الخدمات الإضافية -->
+            <div class="row pt-4">
+              <div class="col-md-12">
+                <h1 class="text-center fw-bold" style="color: rgb(0,136,145);font-size: 20px;line-height: 50px;">
+                  <strong><span>الخدمات الإضافية</span></strong>
+                </h1>
+              </div>
+            </div>
+            <div class="row mx-0 px-2 py-3">
+              <div class="col-12 col-md-9 mx-auto">
+
+                <p class="mb-2"><strong>الخدمة المجانية</strong></p>
+                <select class="form-select mb-4" name="service" id="serviceSelect"></select>
+
+                <p class="mb-2"><strong>سعر الخدمة</strong></p>
+                <input class="form-control mb-4" name="servicePrice" type="text" placeholder="سعر الخدمة علينا"
+                  inputmode="decimal">
+                <input class="form-control mb-4" name="serviceEuroPrice" type="text"
+                  placeholder="€ سعر الخدمة علينا باليورو" inputmode="decimal">
+                <input class="form-control mb-4" name="serviceRemainingPrice" type="text" placeholder="سعر مبيع الخدمة"
+                  inputmode="decimal">
+                <input class="form-control mb-4" name="serviceRemainingEuroPrice" type="text"
+                  placeholder="€ سعر مبيع الخدمة باليورو" inputmode="decimal">
+
+                <p class="mb-2"><strong>هدية الورود</strong></p>
+                <select class="form-select mb-4" name="freeFlower" id="flowerSelect"></select>
+
+              </div>
+            </div>
+
+
+            <!-- معلومات الوسيط -->
+            <div class="row pt-4">
+              <div class="col-md-12">
+                <h1 class="text-center fw-bold" style="color: rgb(0,136,145);font-size: 20px;line-height: 50px;">
+                  <strong><span>معلومات الوسيط</span></strong>
+                </h1>
+              </div>
+            </div>
+            <div class="row mx-0 px-2 py-3">
+              <div class="col-12 col-md-9 mx-auto">
+
+                <p class="mb-2"><strong>اسم الوسيط</strong></p>
+                <select class="form-select mb-4" name="mediator" id="mediatorSelect"></select>
+
+                <p class="mb-2"><strong>العمولة</strong></p>
+                <input class="form-control mb-4" name="commission" type="text" placeholder="أدخل قيمة العمولة"
+                  inputmode="decimal">
+
+              </div>
+            </div>
+            <!-- أزرار التحكم -->
+            <div class="row d-flex justify-content-center" style="margin-right:0px;margin-left:0px;padding-top:24px;">
+              <div class="col col-5 text-start">
+                <button class="btn btn-danger btn-lg" id="reset" type="reset">مسح</button>
+              </div>
+              <div class="col col-5 text-end">
+                <button class="btn btn-primary btn-lg" id="submit" type="submit">تعديل</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <?var url = getUrl();?>
+  <input type="hidden" value="<?= url ?>" id="url" />
+
+  <!-- محول العملات -->
+  <div id="oanda_ecc">
+    <div id="floatingButtonContainer">
+      <button id="toggleWidgetButton">💱</button>
+      <div id="floatingWidgetPanel">
+        <script>
+          var fm = "SAR";
+          var to = "EUR";
+          var tz = "3";
+          var sz = "1x1";
+          var lg = "ar";
+          var st = "success";
+          var lr = "1";
+          var rd = "0";
+        </script>
+        <script src="//currencyrate.today/converter"></script>
+        <div style="text-align:right">
+          <a href="https://currencyrate.today">محول العملات</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+
+    body {
+      font-family: 'Cairo', sans-serif;
+      direction: rtl;
+    }
+
+    .form-control,
+    .form-select {
+      text-align: right;
+    }
+
+    .btn {
+      font-family: 'Cairo', sans-serif;
+    }
+
+    p {
+      font-family: 'Cairo', sans-serif;
+      font-size: 18px;
+      color: rgb(44 63 63);
+    }
+
+    .navbar-nav {
+      padding-right: 0;
+    }
+
+    .offset-md-1 {
+      margin-right: 8.33333%;
+      margin-left: 0;
+    }
+  </style>
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+<script>
+    const selectList = [
+      { selectId: 'sellerSelect', columnName: 'SELLERS', placeholder: 'اسم البائع' },
+      { selectId: 'supplierSelect', columnName: 'HOTEL SUPPLIER', placeholder: 'المزود' },
+      { selectId: 'nationalitySelect', columnName: 'NATIONALITY', placeholder: 'جنسية العميل' },
+      { selectId: 'personSelect', columnName: 'PERSONS', placeholder: 'عدد الاشخاص' },
+      { selectId: 'roomSelect', columnName: 'ROOM TYPE', placeholder: 'نوع الغرفة' },
+      { selectId: 'viewSelect', columnName: 'VIEW TYPE', placeholder: 'الاطلالة' },
+      { selectId: 'mealSelect', columnName: 'MEALS', placeholder: 'نوع الوجبات' },
+      { selectId: "ra3bonSelect", columnName: "RA3BON", placeholder: "طريقة تحصيل العربون"},
+      { selectId: 'currencySelect1', columnName: 'CURRENCY TYPE', placeholder: 'العملة' },
+      { selectId: 'currencySelect2', columnName: 'CURRENCY TYPE', placeholder: 'العملة' },
+      { selectId: 'currencySelect3', columnName: 'CURRENCY TYPE', placeholder: 'العملة' },
+      { selectId: 'flowerSelect', columnName: 'FLOWER', placeholder: 'هل تم اعطاء العميل ورود؟' },
+      { selectId: 'kdvSelect', columnName: 'KDV', placeholder: 'الضريبة' },
+      { selectId: 'reservationSelect', columnName: 'RESERVATION STATE', placeholder: 'حالة الحجز' },
+      { selectId: 'collectionSelect', columnName: 'COLLECTION METHOD', placeholder: 'طريقة التحصيل' },
+      { selectId: 'mediatorSelect', columnName: 'MEDIATOR', placeholder: 'اسم الوسيط' },
+      { selectId: 'serviceSelect', columnName: 'SERVICE', placeholder: 'اسم الخدمة' },
+
+    ];
+
+document.getElementById("reset").addEventListener("click", async function () {
+    // Wait for all columns to clear
+    await Promise.all(selectList.map(({ selectId, columnName, placeholder }) =>
+        clearColumn(selectId, columnName, placeholder)
+    ));
+
+    await onCityChange();
+    await getColumns();
+    document.getElementById('citySelect').value = '';
+});
+
+document.getElementById("toggleWidgetButton").addEventListener("click", function () {
+    const widgetPanel = document.getElementById("floatingWidgetPanel");
+    widgetPanel.style.display = (widgetPanel.style.display === "none" || widgetPanel.style.display === "") ? "block" : "none";
+});
+
+// Close widget when clicking outside
+document.addEventListener("click", function (event) {
+    const widgetPanel = document.getElementById("floatingWidgetPanel");
+    const toggleButton = document.getElementById("toggleWidgetButton");
+
+    if (!widgetPanel.contains(event.target) && !toggleButton.contains(event.target)) {
+        widgetPanel.style.display = "none";
+    }
+});
+
+async function populateCities() {
+    return new Promise((resolve, reject) => {
+        google.script.run.withSuccessHandler((cities) => {
+            console.log("Cities received:", cities);
+            const citySelect = document.getElementById('citySelect');
+            citySelect.innerHTML = '';
+
+            // Placeholder
+            const placeholderOption = document.createElement('option');
+            placeholderOption.value = '';
+            placeholderOption.textContent = 'اسم المدينة';
+            placeholderOption.disabled = true;
+            placeholderOption.selected = true;
+            citySelect.appendChild(placeholderOption);
+
+            cities.forEach(city => {
+                const option = document.createElement('option');
+                option.value = city;
+                option.textContent = city;
+                citySelect.appendChild(option);
+            });
+
+            resolve(); // Resolve after completion
+        }).withFailureHandler(reject).getCities();
+    });
+}
+
+function clearColumn(selectId, columnName, placeholder) {
+    const selectElement = document.getElementById(selectId);
+    selectElement.innerHTML = ""; 
+
+    const placeholderOption = document.createElement("option");
+    placeholderOption.value = "";
+    placeholderOption.textContent = placeholder;
+    placeholderOption.disabled = true;
+    placeholderOption.selected = true;
+    selectElement.appendChild(placeholderOption);
+}
+
+async function getColumns() {
+    await populateCities();
+    generateRoomCount();
+
+    await Promise.all(selectList.map(({ selectId, columnName, placeholder }) =>
+        getColumn(selectId, columnName, placeholder)
+    ));
+}
+
+async function getColumn(selectId, columnName, placeholder) {
+    try {
+        const column = await new Promise((resolve, reject) => {
+            google.script.run.withSuccessHandler(resolve).withFailureHandler(reject).getColumnByName(columnName);
+        });
+
+        console.log(`${columnName} received:`, column);
+        const selectElement = document.getElementById(selectId);
+        selectElement.innerHTML = '';
+
+        const placeholderOption = document.createElement('option');
+        placeholderOption.value = '';
+        placeholderOption.textContent = placeholder;
+        placeholderOption.disabled = true;
+        placeholderOption.selected = true;
+        selectElement.appendChild(placeholderOption);
+
+        column.forEach(item => {
+            const option = document.createElement('option');
+            option.value = item;
+            option.textContent = item;
+            selectElement.appendChild(option);
+        });
+
+    } catch (error) {
+        console.error(`Error fetching data for ${columnName}:`, error);
+    }
+}
+
+async function onCityChange() {
+    const city = document.getElementById('citySelect').value;
+    console.log("Selected City:", city);
+
+    return new Promise((resolve, reject) => {
+        google.script.run
+            .withSuccessHandler((hotels) => {
+                updateHotelDropdown(hotels);
+                resolve(hotels); // Now the promise resolves with the hotel list
+            })
+            .withFailureHandler(reject)
+            .getHotelsByCity(city);
+    });
+}
+
+
+function generateRoomCount() {
+    const select = document.getElementById('numberSelect');
+    select.innerHTML = ''; 
+
+    for (let i = 1; i <= 30; i++) {
+        const option = document.createElement('option');
+        option.value = i;
+        option.textContent = i;
+        select.appendChild(option);
+    }
+}
+
+function updateHotelDropdown(hotels) {
+    const hotelSelect = document.getElementById('hotelSelect');
+    hotelSelect.innerHTML = '';
+
+    if (hotels && hotels.length) {
+        console.log("Hotels received:", hotels);
+        hotels.forEach(hotel => {
+            const option = document.createElement('option');
+            option.value = hotel;
+            option.textContent = hotel;
+            hotelSelect.appendChild(option);
+        });
+    } else {
+        console.log("No hotels available");
+        const option = document.createElement('option');
+        option.value = '';
+        option.textContent = 'يرحى اختيار المدينة اولا';
+        hotelSelect.appendChild(option);
+    }
+}
+
+window.onload = async function () {
+    var customerId = "<?= customerId ?>";
+    console.log("Customer ID:", customerId);
+    console.log("Your email is: " + "<?= userEmail ?>");
+
+    await getColumns();
+    await new Promise((resolve, reject) => {
+        google.script.run.withSuccessHandler(populateFormFields).withFailureHandler(reject).getCustomerDataById(customerId);
+    });
+};
+
+async function populateFormFields(data) {
+    const form = document.getElementById('registration-form');
+    const formFields = form.elements;
+    console.log("---------------------------------");
+    console.log("Data From Sheet:", data);
+    console.log("Data From Form:", formFields);
+
+    data.slice(1).forEach((value, index) => {
+        const field = formFields[index];
+        if (field) {
+            field.value = value;
+        }
+    });
+
+    await onCityChange();
+    console.log("---------------------------------");
+    formFields[7].value = data[8];
+    console.log("Setting hotelSelect to:", data[8]);
+}
+
+document.getElementById("registration-form").addEventListener("submit", async function (event) {
+    event.preventDefault();
+    console.log('Form submitted');
+
+    const form = document.getElementById("registration-form");
+    const formData = new FormData(form);
+
+    // Extract values based on actual form field order
+    const orderedValues = Array.from(form.elements)
+        .filter(el => el.name) // Ensure only named fields are included
+        .map(el => formData.get(el.name));
+
+    console.log("Ordered values:", orderedValues);
+
+    await new Promise((resolve, reject) => {
+        google.script.run
+            .withSuccessHandler(() => {
+                Swal.fire({
+                    title: "تم",
+                    text: "تم تعديل الحجز بنجاح",
+                    icon: "success",
+                    heightAuto: false,
+                    showConfirmButton: false,
+                    timer: 1500,
+                });
+
+                setTimeout(() => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }, 2000);
+
+                form.reset();
+                document.getElementById('citySelect').value = '';
+                onCityChange();
+                getColumns();
+
+                resolve();
+            })
+            .withFailureHandler(reject)
+            .editReservation(orderedValues, "<?= userEmail ?>", "<?= customerId ?>");
+    });
+});
+
+
+
+  function navigateTo(pageName) {
+
+    var url = document.getElementById("url").value;
+    var link = document.createElement('a');
+    link.href = url + "?page=" + pageName;
+    link.id = 'linkURL';
+    document.body.appendChild(link);
+    document.getElementById("linkURL").click();
+
+  }
+
+</script>
+
+</html>
