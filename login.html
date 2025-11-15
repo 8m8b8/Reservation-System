@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <? var appUrl = getUrl(); ?>
   <base target="_top">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
@@ -40,6 +41,8 @@
   </div>
 
   <script>
+    const APP_URL = '<?= appUrl ?>';
+
     document.getElementById("loginButton").addEventListener("click", function() {
       var pass = document.getElementById("password").value;
       if (!pass) return;
@@ -51,8 +54,8 @@
       google.script.run
         .withSuccessHandler(function(success) {
           if (success) {
-            // نجح! أعد تحميل الصفحة ليتم توجيهك
-            window.location.reload();
+            // نجح! انتقل مباشرةً لواجهة النظام
+            window.location.href = APP_URL + '?page=index';
           } else {
             document.getElementById("error-message").style.display = "block";
             document.getElementById("loginButton").disabled = false;
