@@ -36,46 +36,6 @@
             margin-top: 20px;
             padding: 0 15px;
         }
-        
-        /* شريط الأيقونات العلوي - محاكاة لتنسيق الشريط العلوي لديك */
-        .icon-nav {
-            display: flex;
-            justify-content: center;
-            background: var(--primary-color);
-            padding: 10px 0;
-            border-radius: 0 0 10px 10px;
-            box-shadow: var(--shadow-medium);
-            margin-bottom: 20px;
-        }
-
-        .icon-nav-item {
-            text-align: center;
-            padding: 0 20px;
-            cursor: pointer;
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.9);
-            transition: var(--transition);
-        }
-
-        .icon-nav-item i {
-            display: block;
-            font-size: 20px;
-            margin-bottom: 5px;
-        }
-        
-        .icon-nav-item:hover {
-            color: white;
-            opacity: 0.8;
-        }
-        
-        .icon-nav-item.active {
-            background-color: var(--primary-dark);
-            color: white;
-            border-radius: 5px;
-            padding: 5px 20px;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        }
 
         /* لوحة التحكم الرئيسية */
         .main-panel {
@@ -279,25 +239,9 @@
         }
     </style>
 </head>
-<body dir="rtl">
-    <div class="icon-nav">
-        <div class="icon-nav-item active">
-            <i class="fas fa-home"></i>
-            <span>الصفحة الرئيسية</span>
-        </div>
-        <div class="icon-nav-item">
-            <i class="fas fa-box-open"></i>
-            <span>محتوى الخدمة</span>
-        </div>
-        <div class="icon-nav-item">
-            <i class="fas fa-user-friends"></i>
-            <span>الوسطاء</span>
-        </div>
-        <div class="icon-nav-item">
-            <i class="fas fa-cogs"></i>
-            <span>إدارة الإتصالات</span>
-        </div>
-    </div>
+<? var appUrl = getUrl(); var url = appUrl; ?>
+<body dir="rtl" data-page="SUPPLIER">
+    <?!= include("shared-header"); ?>
 
     <div class="container main-container">
         

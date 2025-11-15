@@ -43,32 +43,34 @@
   <script>
     const APP_URL = '<?= appUrl ?>';
 
-    document.getElementById("loginButton").addEventListener("click", function() {
-      var pass = document.getElementById("password").value;
-      if (!pass) return;
+  document.getElementById("loginButton").addEventListener("click", function() {
+    var pass = document.getElementById("password").value;
+    if (!pass) return;
 
-      this.disabled = true; // تعطيل الزر
-      this.innerText = "جارٍ التحقق...";
-      document.getElementById("error-message").style.display = "none";
-      
-      google.script.run
-        .withSuccessHandler(function(success) {
-          if (success) {
-            // نجح! انتقل مباشرةً لواجهة النظام
-            window.location.href = APP_URL + '?page=index';
-          } else {
-            document.getElementById("error-message").style.display = "block";
-            document.getElementById("loginButton").disabled = false;
-            document.getElementById("loginButton").innerText = "دخول";
-          }
-        })
-        .withFailureHandler(function(err) {
-          alert(err.message);
-          document.getElementById("loginButton").disabled = false;
-          document.getElementById("loginButton").innerText = "دخول";
-        })
-        .doLogin(pass);
-    });
+    var loginBtn = this;
+    loginBtn.disabled = true;
+    loginBtn.innerText = "جارٍ التحقق...";
+    document.getElementById("error-message").style.display = "none";
+    
+    google.script.run
+      .withSuccessHandler(function(response) {
+        if (response && response.success) {
+          var targetPage = response.redirect || (response.role === 'admin' ? 'manage-statistics' : 'index');
+          window.location.href = APP_URL + '?page=' + targetPage;
+          return;
+        }
+
+        document.getElementById("error-message").style.display = "block";
+        loginBtn.disabled = false;
+        loginBtn.innerText = "دخول";
+      })
+      .withFailureHandler(function(err) {
+        alert(err.message);
+        loginBtn.disabled = false;
+        loginBtn.innerText = "دخول";
+      })
+      .doLogin(pass);
+  });
   </script>
 </body>
 </html>

@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تحليلات نظام الحجوزات</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <? var appUrl = getUrl(); var url = appUrl; ?>
     <style>
         * {
             margin: 0;
@@ -307,7 +308,8 @@
         }
     </style>
 </head>
-<body>
+<body data-page="manage-statistics">
+    <?!= include("shared-header"); ?>
     <div class="container">
         <!-- الهيدر -->
         <div class="header">
