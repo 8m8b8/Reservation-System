@@ -134,14 +134,10 @@ function doGet(e) {
 
   // 3. إذا كان مسجلاً ولديه صلاحية (أو الصفحة لا تتطلب صلاحية admin)
   
-  // !! هذا هو الكود الذي ينقلك إلى 'index' !!
   // إذا كان المستخدم مسجلاً (role != null) ويحاول فتح 'login' (وهي الافتراضية)
-  // قم بإعادة توجيهه إلى 'index'.
+  // قم بتحميل صفحة index مباشرةً لتفادي شاشة بيضاء أو إعادة تحميل غير منتهية.
   if (page === 'login') {
-    var indexUrl = ScriptApp.getService().getUrl() + '?page=index';
-    return HtmlService.createHtmlOutput(
-      '<script>window.top.location.href = "' + indexUrl + '";</script>'
-    );
+    page = 'index';
   }
   
   // دالة تسجيل الخروج الخاصة
