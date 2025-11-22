@@ -97,15 +97,15 @@
       <i class="fas fa-folder-open"></i>
       <span>إدارة الحجوزات</span>
     </button>
-    <button class="icon-nav-item" data-page="SUPPLIER" data-role="admin">
+      <button class="icon-nav-item" data-page="SUPPLIER" data-role="management">
       <i class="fas fa-box-open"></i>
       <span>مزودي الخدمة</span>
     </button>
-    <button class="icon-nav-item" data-page="mediator" data-role="admin">
+      <button class="icon-nav-item" data-page="mediator" data-role="management">
       <i class="fas fa-user-friends"></i>
       <span>الوسطاء</span>
     </button>
-    <button class="icon-nav-item" data-page="manage-statistics" data-role="admin">
+      <button class="icon-nav-item" data-page="manage-statistics" data-role="management">
       <i class="fas fa-chart-line"></i>
       <span>لوحة الإحصائيات</span>
     </button>
@@ -119,7 +119,9 @@
 <script>
   (function () {
     const baseUrl = '<?= headerAppUrl ?>';
-    const userRole = '<?= userRole ?>' || 'user';
+      const userRole = ('<?= userRole ?>' || 'employee').toLowerCase();
+      const managementRoles = ['admin','owner','developer','accountant'];
+      const hasFullAccess = managementRoles.includes(userRole);
     const body = document.body;
     if (!body.dataset.page) {
       body.dataset.page = 'index';
@@ -127,7 +129,7 @@
 
     document.querySelectorAll('.icon-nav-item').forEach(item => {
       const requiredRole = item.dataset.role;
-      if (requiredRole === 'admin' && userRole !== 'admin') {
+        if (requiredRole === 'management' && !hasFullAccess) {
         item.remove();
         return;
       }

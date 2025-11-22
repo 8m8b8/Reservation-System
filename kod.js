@@ -20,59 +20,152 @@ var KEY_CITIES = 'city_data';
 var KEY_HOTELS = 'hotels_data';
 var KEY_RESERVATIONS = 'reservations_data';
 var KEY_USER_ROLE = 'user_role'; // كاش خاص بجلسة المستخدم
-var ADMIN_ONLY_PAGES = ['manage-statistics', 'SUPPLIER', 'mediator'];
+var USERS_SHEET_NAME = 'USERS';
+var PAGE_SIZE = 20;
+
+var EMPLOYEE_ALLOWED_PAGES = [
+  'index',
+  'Add-client',
+  'add-tour',
+  'add-hotel',
+  'manage-reservations',
+  'edit-reservation'
+];
+
+var MANAGEMENT_ROLES = ['admin', 'owner', 'developer', 'accountant'];
+var KNOWN_ROLES = ['employee'].concat(MANAGEMENT_ROLES);
+
+var DEFAULT_REDIRECT = {
+  employee: 'manage-reservations',
+  admin: 'manage-statistics',
+  owner: 'manage-statistics',
+  developer: 'manage-statistics',
+  accountant: 'manage-statistics'
+};
 
 // -----------------------------------------------------------------
 // 🔒 دوال الأمان وتسجيل الدخول
 // -----------------------------------------------------------------
 
-/**
- * [يتم تشغيلها يدوياً]
- * تقوم بإنشاء وتخزين كلمات المرور بشكل آمن.
- * !! قم بتشغيل هذه الدالة مرة واحدة فقط من المحرر.
- */
-function setupPasswords() {
-  var properties = PropertiesService.getScriptProperties();
-  
-  // !! غيّر كلمات المرور هذه إلى كلمات مرور قوية
-  properties.setProperty('ADMIN_PASSWORD', 'AdminPass123!');
-  properties.setProperty('USER_PASSWORD', 'UserPass456');
-  
-  Logger.log("تم تعيين كلمات المرور بنجاح.");
+function normalizeRole(role) {
+  if (!role) return '';
+  var normalized = role.toString().trim().toLowerCase();
+  return KNOWN_ROLES.indexOf(normalized) !== -1 ? normalized : '';
+}
+
+function hasFullAccess(role) {
+  return MANAGEMENT_ROLES.indexOf(role) !== -1;
+}
+
+function getDefaultPageForRole(role) {
+  var normalized = normalizeRole(role);
+  return DEFAULT_REDIRECT[normalized] || 'index';
+}
+
+function isPageAllowedForRole(page, role) {
+  if (page === 'login' || page === 'logout') {
+    return true;
+  }
+  var normalizedRole = normalizeRole(role);
+  if (!normalizedRole) {
+    return false;
+  }
+  if (hasFullAccess(normalizedRole)) {
+    return true;
+  }
+  return EMPLOYEE_ALLOWED_PAGES.indexOf(page) !== -1;
+}
+
+function findUserByEmail(email) {
+  if (!email) return null;
+  var sheet = ss.getSheetByName(USERS_SHEET_NAME);
+  if (!sheet) {
+    throw new Error('لم يتم العثور على ورقة USERS');
+  }
+  var data = sheet.getDataRange().getValues();
+  var targetEmail = email.toString().trim().toLowerCase();
+  for (var i = 1; i < data.length; i++) {
+    var row = data[i];
+    var recordEmail = (row[1] || '').toString().trim().toLowerCase();
+    if (recordEmail === targetEmail) {
+      return {
+        name: row[0] || '',
+        email: recordEmail,
+        role: normalizeRole(row[2])
+      };
+    }
+  }
+  return null;
+}
+
+function persistSession(sessionPayload) {
+  cache.put(KEY_USER_ROLE, JSON.stringify(sessionPayload), SESSION_DURATION);
 }
 
 /**
  * [تعمل داخلياً]
  * تتحقق من الكاش لمعرفة إذا كان المستخدم لديه جلسة صالحة.
- * @returns {string | null} ترجع 'admin', 'user', أو null إذا لم يكن مسجلاً.
+ * @returns {Object|null} كائن يحتوي على {email, role, name}.
  */
 function checkAuthStatus() {
-  var cache = CacheService.getScriptCache();
-  var role = cache.get(KEY_USER_ROLE);
-  return role;
+  var session = cache.get(KEY_USER_ROLE);
+  if (!session) {
+    return null;
+  }
+  try {
+    var parsed = JSON.parse(session);
+    if (!parsed || !parsed.email || !parsed.role) {
+      return null;
+    }
+    return parsed;
+  } catch (err) {
+    Logger.log('فشل تفريغ الجلسة: ' + err);
+    return null;
+  }
 }
 
 /**
  * [تُستدعى من login.html]
- * تتحقق من كلمة المرور المدخلة وتخزن الجلسة في الكاش.
- * @param {string} password كلمة المرور التي أدخلها المستخدم.
- * @returns {{success: boolean, role: ('admin'|'user'|null), redirect: string|undefined}}
+ * تتحقق من البريد الإلكتروني والدور مقابل ورقة USERS وتخزن الجلسة.
+ * @param {string} email البريد الإلكتروني الذي أدخله المستخدم.
+ * @param {string} role الدور المطلوب.
+ * @returns {{success:boolean, role:string|null, redirect:string|undefined, message:string|undefined}}
  */
-function doLogin(password) {
-  var properties = PropertiesService.getScriptProperties();
-  var adminPass = properties.getProperty('ADMIN_PASSWORD');
-  var userPass = properties.getProperty('USER_PASSWORD');
-  var cache = CacheService.getScriptCache();
+function doLogin(email, role) {
+  var sanitizedEmail = (email || '').toString().trim().toLowerCase();
+  var requestedRole = normalizeRole(role);
 
-  if (password === adminPass) {
-    cache.put(KEY_USER_ROLE, 'admin', SESSION_DURATION);
-    return { success: true, role: 'admin', redirect: 'manage-statistics' };
-  } else if (password === userPass) {
-    cache.put(KEY_USER_ROLE, 'user', SESSION_DURATION);
-    return { success: true, role: 'user', redirect: 'index' };
+  if (!sanitizedEmail || !requestedRole) {
+    return { success: false, role: null, message: 'يرجى إدخال البريد الإلكتروني والدور' };
   }
 
-  return { success: false, role: null };
+  var userRecord = findUserByEmail(sanitizedEmail);
+  if (!userRecord) {
+    return { success: false, role: null, message: 'البريد الإلكتروني غير مسجل' };
+  }
+
+  if (!userRecord.role) {
+    return { success: false, role: null, message: 'لا يوجد دور مرتبط بهذا المستخدم' };
+  }
+
+  if (userRecord.role !== requestedRole) {
+    return { success: false, role: null, message: 'الدور المحدد غير مطابق للسجلات' };
+  }
+
+  var sessionPayload = {
+    email: userRecord.email,
+    role: userRecord.role,
+    name: userRecord.name || ''
+  };
+
+  persistSession(sessionPayload);
+
+  return {
+    success: true,
+    role: userRecord.role,
+    redirect: getDefaultPageForRole(userRecord.role),
+    userName: userRecord.name || ''
+  };
 }
 
 /**
@@ -98,53 +191,64 @@ function doLogout() {
 
 
 function doGet(e) {
-  var role = checkAuthStatus();
-
-  // --------------------------------------------------------------------------
-  // !! السطر الأهم !!
-  // الصفحة الافتراضية هي 'login'.
-  // هذا هو "المفتاح" الذي يجعل التوجيه إلى 'index' يعمل.
-  // --------------------------------------------------------------------------
-  var page = e.parameter.page || 'login';
-
-  // 1. إذا لم يكن مسجلاً (لا يوجد دور)، أظهِر صفحة الدخول
-  if (role == null) {
-    // إذا كان يحاول الوصول لصفحة الدخول، اعرضها
-    if (page === 'login') {
-      return HtmlService.createTemplateFromFile('login').evaluate().setTitle("Login"); // (تم تصحيح العنوان)
+  var session = checkAuthStatus();
+  if (session) {
+    try {
+      var latestRecord = findUserByEmail(session.email);
+      if (!latestRecord || !latestRecord.role) {
+        cache.remove(KEY_USER_ROLE);
+        session = null;
+      } else if (latestRecord.role !== session.role) {
+        session = {
+          email: latestRecord.email,
+          role: latestRecord.role,
+          name: latestRecord.name || ''
+        };
+        persistSession(session);
+      }
+    } catch (validationError) {
+      Logger.log('تعذر تحديث بيانات الجلسة: ' + validationError);
     }
-    // إذا حاول الوصول لأي صفحة أخرى (مثل index)، أعد توجيهه لصفحة الدخول
+  }
+
+  var userRole = session ? session.role : null;
+  var userEmail = session ? session.email : '';
+  var userName = session ? session.name : '';
+  var requestedPage = (e && e.parameter && e.parameter.page) ? e.parameter.page : 'login';
+  var page = requestedPage.toString();
+
+  if (!session) {
+    if (page === 'login') {
+      return HtmlService.createTemplateFromFile('login')
+        .evaluate()
+        .setTitle("Login");
+    }
     var loginUrl = ScriptApp.getService().getUrl() + '?page=login';
     return HtmlService.createHtmlOutput(
       '<script>window.top.location.href = "' + loginUrl + '";</script>'
     );
   }
 
-  // 2. إذا كان مسجلاً، تحقق من الصلاحيات
-  if (ADMIN_ONLY_PAGES.indexOf(page) !== -1 && role !== 'admin') {
-    var defaultUrl = ScriptApp.getService().getUrl() + '?page=index';
-    return HtmlService.createHtmlOutput(
-      '<script>window.top.location.href = "' + defaultUrl + '";</script>'
-    );
-  }
-
-  // 3. إذا كان مسجلاً ولديه صلاحية (أو الصفحة لا تتطلب صلاحية admin)
-  
-  // إذا كان المستخدم مسجلاً (role != null) ويحاول فتح 'login' (وهي الافتراضية)
-  // قم بتحميل صفحة index مباشرةً لتفادي شاشة بيضاء أو إعادة تحميل غير منتهية.
-  if (page === 'login') {
-    page = (role === 'admin') ? 'manage-statistics' : 'index';
-  }
-  
-  // دالة تسجيل الخروج الخاصة
   if (page === 'logout') {
     return doLogout();
   }
 
-  // اعرض الصفحة المطلوبة (مثل index.html, add-client.html, etc.)
+  if (page === 'login') {
+    page = getDefaultPageForRole(userRole);
+  }
+
+  if (!isPageAllowedForRole(page, userRole)) {
+    var fallback = getDefaultPageForRole(userRole);
+    var fallbackUrl = ScriptApp.getService().getUrl() + '?page=' + fallback;
+    return HtmlService.createHtmlOutput(
+      '<script>window.top.location.href = "' + fallbackUrl + '";</script>'
+    );
+  }
+
   var template = HtmlService.createTemplateFromFile(page);
-  template.userRole = role; // تمرير الصلاحية للصفحة
-  template.userEmail = role; // لإصلاح خطأ ReferenceError من الكود القديم
+  template.userRole = userRole || '';
+  template.userEmail = userEmail || '';
+  template.userName = userName || '';
   
   return template.evaluate()
     .setTitle("Reservation")

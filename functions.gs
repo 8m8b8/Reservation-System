@@ -118,56 +118,112 @@ function getHotelsByCity(city) {
     return customerData;
   }
 
-function getCustomers(searchTerm) {
-    searchTerm = '';
-    var sheet = SpreadsheetApp.openById("1Y5yMDhW9Lou2VY0zgsPqo7DDih66Qa4sfupI3cNV-0Q").getSheetByName("DATABASE");
-    const data = sheet.getDataRange().getValues();
-    const customers = [];
+function getCustomers(searchTerm, pageNumber, checkInDate, checkOutDate) {
+  var sheet = SpreadsheetApp.openById("1Y5yMDhW9Lou2VY0zgsPqo7DDih66Qa4sfupI3cNV-0Q").getSheetByName("DATABASE");
+  var data = sheet.getDataRange().getValues();
+  var timezone = Session.getScriptTimeZone();
+  var sanitizedSearch = (searchTerm || '').toString().trim().toLowerCase();
+  var pageSize = PAGE_SIZE || 20;
+  var page = parseInt(pageNumber, 10);
+  if (isNaN(page) || page < 1) {
+    page = 1;
+  }
 
-    searchTerm = searchTerm.trim().toLowerCase(); // Ensure the search term is always in lowercase
-    for (let i = 1; i < data.length; i++) {
-        const customer = {
-            id: data[i][0], // Assuming data[i][0] is numeric
-            name: data[i][3],
-            phone: data[i][4],
-            person: data[i][6],
-            city: data[i][7],
-            hotel: data[i][8],
-            hotelConfirmation: data[i][9],
-            checkinDate: Utilities.formatDate(data[i][10], Session.getScriptTimeZone(), "yyyy-MM-dd"),
-            checkoutDate: Utilities.formatDate(data[i][11], Session.getScriptTimeZone(), "yyyy-MM-dd"),
-            roomCount: data[i][12],
-            roomType: data[i][13],
-            viewType: data[i][14],
-            meals: data[i][15],
-            sellinPrice: data[i][18],
-            sellinEuroPrice: data[i][19],
-            currency: data[i][20],
-            arrivedAmount: data[i][24],
-            arrivedEuroAmount: data[i][25],
-            sendingCost: data[i][27],
-            sendingEuroCost: data[i][28],
-            arrivedAmountCurrency: data[i][29],
-            remainingAmount: data[i][30],
-            remainingEuroAmount: data[i][31],
-            remainingAmountCurrency: data[i][32],
-            service: data[i][36],
-            servicePrice: data[i][37],
-            serviceEuroPrice: data[i][38],
-            serviceSellingPrice: data[i][39],
-            serviceSellingEuroPrice: data[i][40],
-            flowerGift: data[i][41],
+  var startDate = checkInDate ? new Date(checkInDate) : null;
+  var endDate = checkOutDate ? new Date(checkOutDate) : null;
+  if (startDate && isNaN(startDate.getTime())) {
+    startDate = null;
+  }
+  if (endDate && isNaN(endDate.getTime())) {
+    endDate = null;
+  }
 
-        };
+  var rows = [];
+  for (var i = 1; i < data.length; i++) {
+    rows.push(data[i]);
+  }
 
-        // Ensure both are strings for comparison
-        if (customer.id.toString().toLowerCase().includes(searchTerm)) {
-            customers.push(customer);
-        }
+  var filteredRows = rows.filter(function (row) {
+    var checkinValue = parseSheetDate(row[10]);
+    var checkoutValue = parseSheetDate(row[11]);
+    var text = [
+      row[0],
+      row[3],
+      row[4],
+      row[7],
+      row[8],
+      row[9]
+    ].join(' ').toString().toLowerCase();
+
+    var matchesSearch = sanitizedSearch ? text.indexOf(sanitizedSearch) !== -1 : true;
+    if (!matchesSearch) {
+      return false;
     }
 
-    console.log(customers.length);
-    return JSON.stringify(customers);
+    if (startDate && (!checkinValue || checkinValue < startDate)) {
+      return false;
+    }
+    if (endDate && (!checkoutValue || checkoutValue > endDate)) {
+      return false;
+    }
+
+    return true;
+  });
+
+  var totalCount = filteredRows.length;
+  var totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
+  if (page > totalPages) {
+    page = totalPages;
+  }
+  var startIndex = (page - 1) * pageSize;
+  var pageRows = filteredRows.slice(startIndex, startIndex + pageSize);
+
+  var customers = pageRows.map(function (row) {
+    var checkinValue = parseSheetDate(row[10]);
+    var checkoutValue = parseSheetDate(row[11]);
+    return {
+      id: row[0],
+      name: row[3],
+      phone: row[4],
+      person: row[6],
+      city: row[7],
+      hotel: row[8],
+      hotelConfirmation: row[9],
+      checkinDate: checkinValue ? Utilities.formatDate(checkinValue, timezone, "yyyy-MM-dd") : '',
+      checkoutDate: checkoutValue ? Utilities.formatDate(checkoutValue, timezone, "yyyy-MM-dd") : '',
+      roomCount: row[12],
+      roomType: row[13],
+      viewType: row[14],
+      meals: row[15],
+      sellinPrice: row[18],
+      sellinEuroPrice: row[19],
+      currency: row[20],
+      arrivedAmount: row[24],
+      arrivedEuroAmount: row[25],
+      sendingCost: row[27],
+      sendingEuroCost: row[28],
+      arrivedAmountCurrency: row[29],
+      remainingAmount: row[30],
+      remainingEuroAmount: row[31],
+      remainingAmountCurrency: row[32],
+      service: row[36],
+      servicePrice: row[37],
+      serviceEuroPrice: row[38],
+      serviceSellingPrice: row[39],
+      serviceSellingEuroPrice: row[40],
+      flowerGift: row[41]
+    };
+  });
+
+  return {
+    data: customers,
+    pagination: {
+      page: page,
+      totalPages: totalPages,
+      pageSize: pageSize,
+      totalCount: totalCount
+    }
+  };
 }
 
 function clearInvoice(){
