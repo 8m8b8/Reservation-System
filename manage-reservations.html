@@ -59,11 +59,98 @@
       font-family: '29LT Bukra Bold', sans-serif !important;
     }
     
-    @media (max-width: 768px) {
-      .invoice-form, .voucher-form {
-        max-width: 100%;
+      @media (max-width: 768px) {
+        .invoice-form, .voucher-form {
+          max-width: 100%;
+        }
       }
-    }
+
+      .reservation-cards {
+        display: none;
+        margin-top: 20px;
+        gap: 16px;
+      }
+      .reservation-card {
+        background: #fff;
+        border-radius: 14px;
+        box-shadow: var(--shadow-medium);
+        padding: 16px 20px;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .reservation-card .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      .reservation-card .card-header h3 {
+        font-size: 1.05rem;
+        margin: 0;
+        color: var(--text-dark);
+      }
+      .reservation-card .card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 10px;
+      }
+      .reservation-card .card-field {
+        display: flex;
+        flex-direction: column;
+        font-size: 0.9rem;
+        color: #4f5d5d;
+        background: var(--bg-light);
+        border-radius: 10px;
+        padding: 10px;
+      }
+      .reservation-card .card-field span {
+        font-size: 0.78rem;
+        color: #6d7a7a;
+      }
+      .reservation-card .card-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .reservation-card .card-actions .action-buttons {
+        display: flex;
+        gap: 8px;
+      }
+      .pagination-controls {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 12px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+      }
+      .pagination-controls button {
+        min-width: 110px;
+      }
+      .pagination-meta {
+        text-align: center;
+        color: #6d7a7a;
+        margin-top: 8px;
+        font-size: 0.95rem;
+      }
+      @media (max-width: 768px) {
+        .table-responsive {
+          display: none;
+        }
+        .reservation-cards {
+          display: flex;
+          flex-direction: column;
+        }
+      }
+      @media (min-width: 769px) {
+        .reservation-cards {
+          display: none;
+        }
+      }
   </style>
 </head>
 
@@ -144,60 +231,79 @@
     }
   </style>
 
-  <div class="shared-header-wrapper" dir="rtl">
-    <div class="icon-nav" id="ghada-nav-bar">
-      <button class="icon-nav-item" data-page="index">
-        <i class="fas fa-home"></i>
-        <span>إضافة حجز</span>
-      </button>
-      <button class="icon-nav-item" data-page="Add-client">
-        <i class="fas fa-user-plus"></i>
-        <span>إضافة عميل</span>
-      </button>
-      <button class="icon-nav-item" data-page="add-tour">
-        <i class="fas fa-route"></i>
-        <span>إضافة رحلة</span>
-      </button>
-      <button class="icon-nav-item" data-page="add-hotel">
-        <i class="fas fa-hotel"></i>
-        <span>إضافة فندق</span>
-      </button>
-      <button class="icon-nav-item" data-page="manage-reservations">
-        <i class="fas fa-folder-open"></i>
-        <span>إدارة الحجوزات</span>
-      </button>
-      <button class="icon-nav-item" data-page="logout">
-        <i class="fas fa-right-from-bracket"></i>
-        <span>تسجيل الخروج</span>
-      </button>
+    <div class="shared-header-wrapper" dir="rtl">
+      <div class="icon-nav" id="ghada-nav-bar">
+        <button class="icon-nav-item" data-page="index">
+          <i class="fas fa-home"></i>
+          <span>إضافة حجز</span>
+        </button>
+        <button class="icon-nav-item" data-page="Add-client">
+          <i class="fas fa-user-plus"></i>
+          <span>إضافة عميل</span>
+        </button>
+        <button class="icon-nav-item" data-page="add-tour">
+          <i class="fas fa-route"></i>
+          <span>إضافة رحلة</span>
+        </button>
+        <button class="icon-nav-item" data-page="add-hotel">
+          <i class="fas fa-hotel"></i>
+          <span>إضافة فندق</span>
+        </button>
+        <button class="icon-nav-item" data-page="manage-reservations">
+          <i class="fas fa-folder-open"></i>
+          <span>إدارة الحجوزات</span>
+        </button>
+        <button class="icon-nav-item" data-page="SUPPLIER" data-role="management">
+          <i class="fas fa-box-open"></i>
+          <span>مزودي الخدمة</span>
+        </button>
+        <button class="icon-nav-item" data-page="mediator" data-role="management">
+          <i class="fas fa-user-friends"></i>
+          <span>الوسطاء</span>
+        </button>
+        <button class="icon-nav-item" data-page="manage-statistics" data-role="management">
+          <i class="fas fa-chart-line"></i>
+          <span>لوحة الإحصائيات</span>
+        </button>
+        <button class="icon-nav-item" data-page="logout">
+          <i class="fas fa-right-from-bracket"></i>
+          <span>تسجيل الخروج</span>
+        </button>
+      </div>
     </div>
-  </div>
 
   <script>
-    (function () {
-      const baseUrl = '<?= headerAppUrl ?>';
-      const body = document.body;
-      if (!body.dataset.page) {
-        body.dataset.page = 'index';
-      }
-
-      document.querySelectorAll('#ghada-nav-bar .icon-nav-item').forEach(item => {
-        if (item.dataset.page === body.dataset.page) {
-          item.classList.add('active');
+      (function () {
+        const baseUrl = '<?= headerAppUrl ?>';
+        const userRole = ('<?= userRole ?>' || 'employee').toLowerCase();
+        const managementRoles = ['admin','owner','developer','accountant'];
+        const hasFullAccess = managementRoles.includes(userRole);
+        const body = document.body;
+        if (!body.dataset.page) {
+          body.dataset.page = 'index';
         }
 
-        item.addEventListener('click', () => {
-          const targetPage = item.dataset.page;
-          if (!targetPage) return;
+        document.querySelectorAll('#ghada-nav-bar .icon-nav-item').forEach(item => {
+          if (item.dataset.role === 'management' && !hasFullAccess) {
+            item.remove();
+            return;
+          }
+          if (item.dataset.page === body.dataset.page) {
+            item.classList.add('active');
+          }
 
-          const targetUrl = (targetPage === 'index')
-            ? baseUrl
-            : `${baseUrl}?page=${targetPage}`;
+          item.addEventListener('click', () => {
+            const targetPage = item.dataset.page;
+            if (!targetPage) return;
 
-          window.top.location.href = targetUrl;
+            const targetUrl = (targetPage === 'index')
+              ? baseUrl
+              : `${baseUrl}?page=${targetPage}`;
+
+            window.top.location.href = targetUrl;
+          });
         });
-      });
-    })();
+      })();
   </script>
   <div class="container-lg align-items-start">
     <div class="row pt-4">
@@ -252,6 +358,13 @@
             </tbody>
           </table>
         </div>
+          <div id="cardResults" class="reservation-cards"></div>
+          <div class="pagination-controls">
+            <button id="prevPage" class="btn btn-outline-primary" type="button">السابق</button>
+            <span id="pageIndicator" class="fw-bold"></span>
+            <button id="nextPage" class="btn btn-outline-primary" type="button">التالي</button>
+          </div>
+          <div id="pageMeta" class="pagination-meta"></div>
       </div>
     </div>
     <div id="customerModal" class="modal">
@@ -282,80 +395,66 @@
   integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 <script>
 
-  $(document).ready(function () {
-    // Global arrays to hold all customers and matched customers
-    var allCustomers = [];
-    var matchedCustomers = [];
+    $(document).ready(function () {
+      var allCustomers = [];
+      var currentPagination = { page: 1, totalPages: 1, totalCount: 0, pageSize: 20 };
+      var userEmail = "<?= userEmail ?>";
+      var debounceHandle = null;
+      var DEBOUNCE_DELAY = 400;
 
-    // Sorting functionality
-    $(".sortable").click(function () {
-      const sortKey = $(this).data("sort");
-      const ascending = $(this).hasClass("ascending");
+      // Sorting functionality (client-side for the current page)
+      $(".sortable").click(function () {
+        const sortKey = $(this).data("column");
+        const ascending = $(this).hasClass("ascending");
 
-      // Toggle sorting classes
-      $(".sortable").removeClass("ascending descending");
-      $(this).toggleClass("ascending", !ascending);
-      $(this).toggleClass("descending", ascending);
+        $(".sortable").removeClass("ascending descending");
+        $(this).toggleClass("ascending", !ascending);
+        $(this).toggleClass("descending", ascending);
 
-      // Sort the data
-      allCustomers.sort(function (a, b) {
-        let valueA = a[sortKey];
-        let valueB = b[sortKey];
+        allCustomers.sort(function (a, b) {
+          let valueA = a[sortKey];
+          let valueB = b[sortKey];
 
-        if (typeof valueA === "string") {
-          valueA = valueA.toLowerCase();
-          valueB = valueB.toLowerCase();
-        }
+          if (typeof valueA === "string") {
+            valueA = valueA.toLowerCase();
+            valueB = valueB.toLowerCase();
+          }
 
-        return ascending
-          ? valueB > valueA ? 1 : -1
-          : valueA > valueB ? 1 : -1;
+          if (valueA === valueB) return 0;
+          if (ascending) {
+            return valueA < valueB ? 1 : -1;
+          }
+          return valueA > valueB ? 1 : -1;
+        });
+
+        renderReservations(allCustomers);
       });
 
-      // Repopulate the table
-      populateTable(JSON.stringify(allCustomers));
-    });
 
+      $(document).on("dblclick", ".results tbody tr", function (event) {
+        if ($(event.target).is("button") || $(event.target).closest("button").length > 0) {
+          return;
+        }
+        openReservationDetails($(this).data("row-id"));
+      });
 
-    $(document).on("dblclick", ".results tbody tr", function (event) {
-      if ($(event.target).is("button") || $(event.target).closest("button").length > 0) {
-        return;
-      }
+      $(document).on("click", ".reservation-card", function (event) {
+        if (
+          $(event.target).is("button") ||
+          $(event.target).closest("button").length > 0 ||
+          $(event.target).is("input") ||
+          $(event.target).closest("input").length > 0
+        ) {
+          return;
+        }
+        openReservationDetails($(this).data("row-id"));
+      });
 
-      // Extract customer data from row attributes or cells
-      var customerMapData = null;
-      google.script.run.withSuccessHandler(function (customerMapData) {
-        console.log("Response received:", customerMapData);
-        // Show the modal
-
-        const checkinDate = new Date(customerMapData.checkinDate);
-        const checkoutDate = new Date(customerMapData.checkoutDate);
-        const dayCount = (checkoutDate - checkinDate) / (1000 * 60 * 60 * 24);
-
-        $("#modalCustomerName").text(customerMapData.name);
-        $("#modalCustomerHotel").text(customerMapData.hotel);
-        $("#modalCustomerCheckin").text(customerMapData.checkinDate);
-        $("#modalCustomerCheckout").text(customerMapData.checkoutDate);
-        $("#modalCustomerPhone").text(customerMapData.phone);
-        $("#modalCustomerPersonCount").text(customerMapData.person);
-        $("#modalCustomerArrivedAmount").text(customerMapData.arrivedAmount + customerMapData.arrivedAmountCurrency.slice(-1));
-        $("#modalCustomerRemainingAmount").text(
-        customerMapData.remainingAmount && customerMapData.remainingAmount !== 0 
-        ? customerMapData.remainingAmount + customerMapData.remainingAmountCurrency.slice(-1) 
-        : "لا يوجد");
-
-        $("#modalCustomerNightPrice").text(customerMapData.sellinPrice + customerMapData.currency.slice(-1));
-        $("#modalCustomerTotalPrice").text(dayCount * customerMapData.roomCount * customerMapData.sellinEuroPrice + '€');
-        $("#modalCustomerPhone, #modalCustomerPersonCount, #modalCustomerArrivedAmount, #modalCustomerRemainingAmount, #modalCustomerNightPrice, #modalCustomerTotalPrice")
-         .css({ "direction": "ltr", "unicode-bidi": "embed", "text-align": "left" });
-
-      }).getCustomerMapData($(this).data("row-id"));
-      setTimeout(function () {
-        $("#customerModal").addClass('show'); // Add class to show modal
-      }, 1000);  // 1000 milliseconds = 1 second
-
-      // Populate the modal with the customer data
-    });
+      $(document).on("click", ".view-details", function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        openReservationDetails($(this).data("id"));
+      });
 
     // Close modal when clicking the close button or outside the modal
     $(document).on("click", function (event) {
@@ -366,35 +465,32 @@
     });
 
 
-    $(".table-header.sortable").on("click", function () {
-      var $header = $(this);
-      var column = $header.data("column"); // Get the column to sort by
-      var currentOrder = $header.data("order") || "asc"; // Default to ascending
-      var newOrder = currentOrder === "asc" ? "desc" : "asc"; // Toggle order
+      // Fetch and display customer data on load
+      getCustomerInfo(userEmail);
 
-      // Remove 'active' class from all headers and reset their data-order
-      $(".table-header.sortable").removeClass("active").data("order", "");
+      // Add event listeners for filters
+      $("#checkInDate, #checkOutDate").on("change", function () {
+        getCustomerInfo(userEmail, 1);
+      });
 
-      // Set active and new order on the clicked header
-      $header.addClass("active").data("order", newOrder);
+      $("#customerId").on("input", function () {
+        clearTimeout(debounceHandle);
+        debounceHandle = setTimeout(function () {
+          getCustomerInfo(userEmail, 1);
+        }, DEBOUNCE_DELAY);
+      });
 
-      // Sort and repopulate the table
-      populateTable(JSON.stringify(allCustomers));
-    });
-    // Fetch and display customer data on load, passing the user's email
-    var userEmail = "<?= userEmail ?>"; // This should be fetched dynamically
-    getCustomerInfo(userEmail);
-    // Add event listeners for date inputs
-    $("#checkInDate, #checkOutDate").on("change", function () {
-      filterResults($("#customerId").val().trim().toLowerCase());
-    });
+      $("#prevPage").on("click", function () {
+        if (currentPagination.page > 1) {
+          getCustomerInfo(userEmail, currentPagination.page - 1);
+        }
+      });
 
-    // Search functionality on keyup
-    $("#customerId").on("keyup", function () {
-      var searchTerm = $(this).val().trim().toLowerCase(); // Ensure search term is always lowercase
-      console.log("Search term on keyup:", searchTerm);
-      filterResults(searchTerm);
-    });
+      $("#nextPage").on("click", function () {
+        if (currentPagination.page < currentPagination.totalPages) {
+          getCustomerInfo(userEmail, currentPagination.page + 1);
+        }
+      });
     $(document).on("click", ".edit-button", function () {
       // Get the customer ID from the data-id attribute of the clicked button
       var customerId = $(this).data("id");
@@ -812,164 +908,283 @@
         cancelButtonText: "إلغاء"
       }).then((result) => {
         if (result.isConfirmed) {
-          google.script.run.withSuccessHandler(function (response) {
-            Swal.fire({
-              title: "تم النقل!",
-              text: "تم نقل العميل إلى الأرشيف",
-              icon: "success",
-              timer: 1500,
-              showConfirmButton: false
-            });
-            getCustomerInfo(userEmail);
-          }).archiveReservation(rowId, userEmail);
+            google.script.run.withSuccessHandler(function (response) {
+              Swal.fire({
+                title: "تم النقل!",
+                text: "تم نقل العميل إلى الأرشيف",
+                icon: "success",
+                timer: 1500,
+                showConfirmButton: false
+              });
+              getCustomerInfo(userEmail, currentPagination.page);
+            }).archiveReservation(rowId, userEmail);
         }
       });
     });
 
 
 
-    // Function to get customer information from Google Apps Script
-    function getCustomerInfo(userEmail, searchTerm = "") {
-      console.log("Fetching customer data with userEmail:", userEmail, "and search term:", searchTerm);
-      google.script.run.withSuccessHandler(populateTable).getCustomers(searchTerm);
-    }
+      function getCustomerInfo(userEmail, pageOverride) {
+        const targetPage = pageOverride || 1;
+        const searchTerm = $("#customerId").val().trim();
+        const checkIn = $("#checkInDate").val();
+        const checkOut = $("#checkOutDate").val();
 
-
-    function populateTable(data) {
-      var customers = JSON.parse(data);
-      allCustomers = customers; // Store all customer data in the global array
-      var $tbody = $(".results tbody");
-      $tbody.empty(); // Clear any existing rows
-
-      console.log("Number of customers retrieved:", customers.length);
-
-      if (customers.length === 0) {
-        $(".no-result").show();
-        $(".counter").text("لا يوحد حجوزات");
-      } else {
-        $(".no-result").hide();
-        customers.forEach(function (customer) {
-          var row = `
-                    <tr data-row-id="${customer.id}">
-                        <td class="text-center align-middle">
-                            <input type="checkbox" class="reservation-checkbox" data-id="${customer.id}">
-                        </td>
-                        <td class="text-center align-middle" style="font-size: 2.5vmin;">${customer.name}</td>
-                        <td class="text-center align-middle" style="font-size: 2.5vmin;">${customer.hotel}</td>
-                        <td class="text-center align-middle" style="font-size: 2.5vmin;">${customer.checkinDate}</td>
-                        <td class="text-center align-middle" style="font-size: 2.5vmin;">${customer.checkoutDate}</td>
-                        <td class="text-center align-middle">
-                            <button class="btn btn-dark voucher-button" data-id="${customer.id}">
-                                <i class="fa fa-print"></i>
-                            </button>
-                            <button class="btn btn-success edit-button" data-id="${customer.id}">
-                                <i class="fa fa-edit"></i>
-                            </button>
-                            <button class="btn btn-danger delete-button" data-id="${customer.id}">
-                                <i class="fa fa-trash"></i>
-                            </button>
-                        </td>
-                    </tr>`;
-          $tbody.append(row);
-        });
-
-        // Update the count of items
-        $('.counter').text(customers.length + ' :رقم الحجوزات');
+        $("#pageIndicator").text("جارٍ التحميل...");
+        google.script.run
+          .withSuccessHandler(function (response) {
+            handleCustomersResponse(response, targetPage);
+          })
+          .withFailureHandler(function (err) {
+            console.error('Error fetching reservations', err);
+            Swal.fire('خطأ', 'تعذر تحميل بيانات الحجوزات', 'error');
+          })
+          .getCustomers(searchTerm, targetPage, checkIn, checkOut);
       }
 
-      // Initial filtering based on any existing search term
-      filterResults($("#customerId").val().trim().toLowerCase());
-    }
+      function handleCustomersResponse(response, requestedPage) {
+        var safeResponse = response || {};
+        var pagination = safeResponse.pagination || {};
+        pagination.page = pagination.page || requestedPage || 1;
+        pagination.totalPages = pagination.totalPages || 1;
+        pagination.totalCount = pagination.totalCount || 0;
+        pagination.pageSize = pagination.pageSize || 20;
 
-    // Function to filter results based on the search term
-    function filterResults(searchTerm) {
-      var $rows = $(".results tbody tr");
-      var jobCount = 0;
+        currentPagination = pagination;
+        allCustomers = safeResponse.data || [];
 
-      // Clear matchedCustomers array on each filter
-      matchedCustomers = [];
+        renderReservations(allCustomers);
+        updatePaginationControls(pagination);
+      }
 
-      // Get the selected check-in and check-out dates
-      var selectedCheckInDate = $("#checkInDate").val();
-      var selectedCheckOutDate = $("#checkOutDate").val();
+      function renderReservations(customers) {
+        var $tbody = $(".results tbody");
+        var $cardContainer = $("#cardResults");
+        $tbody.empty();
+        $cardContainer.empty();
 
-      console.log("Filtering results with search term:", searchTerm, "and dates:", selectedCheckInDate, selectedCheckOutDate);
-
-      allCustomers.forEach(function (customer) {
-        var customerText = (
-          customer.id + " " +
-          customer.name + " " +
-          customer.hotel + " " +
-          customer.checkinDate + " " +
-          customer.checkoutDate + " "
-        ).toLowerCase();
-
-        // Check if the customer matches the search term and date range
-        var matchesSearch = searchTerm ? customerText.includes(searchTerm) : true;
-        var matchesDateRange = true;
-
-        if (selectedCheckInDate && selectedCheckOutDate) {
-          matchesDateRange = customer.checkinDate >= selectedCheckInDate && customer.checkoutDate <= selectedCheckOutDate;
-        } else if (selectedCheckInDate) {
-          matchesDateRange = customer.checkinDate >= selectedCheckInDate;
-        } else if (selectedCheckOutDate) {
-          matchesDateRange = customer.checkoutDate <= selectedCheckOutDate;
+        if (!customers.length) {
+          $tbody.append(`
+            <tr class="warning">
+              <td colspan="6" class="text-center">لا توجد نتائج</td>
+            </tr>
+          `);
+          $cardContainer.append(`
+            <div class="reservation-card text-center">
+              لا توجد نتائج مطابقة لخيارات البحث الحالية
+            </div>
+          `);
+        } else {
+          customers.forEach(function (customer) {
+            $tbody.append(buildReservationRow(customer));
+            $cardContainer.append(buildReservationCard(customer));
+          });
         }
 
-        // Add customer to matchedCustomers if both conditions are met
-        if (matchesSearch && matchesDateRange) {
-          matchedCustomers.push(customer);
+        $('.counter').text(printReservationMessage(currentPagination.totalCount));
+      }
+
+      function buildReservationRow(customer) {
+        return `
+          <tr data-row-id="${customer.id || ''}">
+            <td class="text-center align-middle">
+              <input type="checkbox" class="reservation-checkbox" data-id="${customer.id}">
+            </td>
+            <td class="text-center align-middle" style="font-size: 2.5vmin;">${safeValue(customer.name)}</td>
+            <td class="text-center align-middle" style="font-size: 2.5vmin;">${safeValue(customer.hotel)}</td>
+            <td class="text-center align-middle" style="font-size: 2.5vmin;">${safeValue(customer.checkinDate)}</td>
+            <td class="text-center align-middle" style="font-size: 2.5vmin;">${safeValue(customer.checkoutDate)}</td>
+            <td class="text-center align-middle">
+              <button class="btn btn-dark voucher-button" data-id="${customer.id}">
+                <i class="fa fa-print"></i>
+              </button>
+              <button class="btn btn-success edit-button" data-id="${customer.id}">
+                <i class="fa fa-edit"></i>
+              </button>
+              <button class="btn btn-danger delete-button" data-id="${customer.id}">
+                <i class="fa fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      }
+
+      function buildReservationCard(customer) {
+        var pricePerNight = customer.sellinPrice
+          ? `${customer.sellinPrice} ${customer.currency || ''}`
+          : '—';
+        var remainingAmount = customer.remainingAmount
+          ? `${customer.remainingAmount} ${customer.remainingAmountCurrency || ''}`
+          : 'لا يوجد';
+
+        return `
+          <div class="reservation-card" data-row-id="${customer.id || ''}">
+            <div class="card-header">
+              <div>
+                <h3>${safeValue(customer.name)}</h3>
+                <small class="text-muted d-block">رقم الحجز: ${safeValue(customer.id)}</small>
+                <small class="text-muted d-block">${safeValue(customer.person, '0')} ضيوف</small>
+              </div>
+              <div>
+                <input type="checkbox" class="reservation-checkbox" data-id="${customer.id}">
+              </div>
+            </div>
+            <div class="card-grid">
+              <div class="card-field">
+                <span>الفندق</span>
+                <strong>${safeValue(customer.hotel)}</strong>
+              </div>
+              <div class="card-field">
+                <span>المدينة</span>
+                <strong>${safeValue(customer.city)}</strong>
+              </div>
+              <div class="card-field">
+                <span>تاريخ الوصول</span>
+                <strong>${safeValue(customer.checkinDate)}</strong>
+              </div>
+              <div class="card-field">
+                <span>تاريخ المغادرة</span>
+                <strong>${safeValue(customer.checkoutDate)}</strong>
+              </div>
+              <div class="card-field">
+                <span>نوع الغرفة</span>
+                <strong>${safeValue(customer.roomType)}</strong>
+              </div>
+              <div class="card-field">
+                <span>السعر لليلة</span>
+                <strong>${pricePerNight}</strong>
+              </div>
+              <div class="card-field">
+                <span>المتبقي</span>
+                <strong>${remainingAmount}</strong>
+              </div>
+            </div>
+            <div class="card-actions">
+              <div class="action-buttons">
+                <button class="btn btn-dark voucher-button" data-id="${customer.id}">
+                  <i class="fa fa-print"></i>
+                </button>
+                <button class="btn btn-success edit-button" data-id="${customer.id}">
+                  <i class="fa fa-edit"></i>
+                </button>
+                <button class="btn btn-danger delete-button" data-id="${customer.id}">
+                  <i class="fa fa-trash"></i>
+                </button>
+              </div>
+              <button class="btn btn-link p-0 text-decoration-none view-details" data-id="${customer.id}">
+                عرض التفاصيل
+              </button>
+            </div>
+          </div>
+        `;
+      }
+
+      function updatePaginationControls(meta) {
+        var page = meta.page || 1;
+        var totalPages = meta.totalPages || 1;
+        var totalCount = meta.totalCount || 0;
+
+        if (totalCount === 0) {
+          $("#pageIndicator").text("لا توجد صفحات");
+          $("#pageMeta").text("لا توجد نتائج لعرضها");
+        } else if (!allCustomers.length) {
+          $("#pageIndicator").text(`صفحة ${page} من ${totalPages}`);
+          $("#pageMeta").text("لا توجد نتائج على هذه الصفحة");
+        } else {
+          $("#pageIndicator").text(`صفحة ${page} من ${totalPages}`);
+          var start = (page - 1) * meta.pageSize + 1;
+          var end = start + (allCustomers.length || 0) - 1;
+          $("#pageMeta").text(`عرض ${start}-${end} من ${totalCount} حجز`);
         }
-      });
 
-      // Display only rows that match the search and date filters
-      $rows.each(function () {
-        var $row = $(this);
-        var rowId = $row.data("row-id");
-        var isVisible = matchedCustomers.some(customer => customer.id === rowId);
-        $row.toggle(isVisible);
-        if (isVisible) jobCount++;
-      });
+        $("#prevPage").prop("disabled", page <= 1);
+        $("#nextPage").prop("disabled", page >= totalPages || totalCount === 0);
+      }
 
-      // Log matched customers array for debugging
-      console.log("Matched Customers:", matchedCustomers);
+      function safeValue(value, placeholder) {
+        if (value === 0 || value === '0') {
+          return value;
+        }
+        return value && value !== "" ? value : (placeholder || "—");
+      }
 
-      // Update counter display
-      $('.counter').text(printReservationMessage(jobCount));
-      $(".no-result").toggle(jobCount === 0); // Show or hide the no result message
-    }
+      function formatMoney(amount, currency, emptyLabel) {
+        if (amount === null || typeof amount === "undefined" || amount === "") {
+          return emptyLabel || "—";
+        }
+        var suffix = currency ? ` ${currency}` : '';
+        return `${amount}${suffix}`;
+      }
+
+      function openReservationDetails(rowId) {
+        if (!rowId) return;
+
+        google.script.run
+          .withSuccessHandler(function (customerMapData) {
+            if (!customerMapData) {
+              Swal.fire('تنبيه', 'لا توجد بيانات لهذا الحجز', 'info');
+              return;
+            }
+
+            var checkinDate = new Date(customerMapData.checkinDate);
+            var checkoutDate = new Date(customerMapData.checkoutDate);
+            var dayCount = (!isNaN(checkinDate) && !isNaN(checkoutDate))
+              ? (checkoutDate - checkinDate) / (1000 * 60 * 60 * 24)
+              : 0;
+
+            $("#modalCustomerName").text(customerMapData.name || '—');
+            $("#modalCustomerHotel").text(customerMapData.hotel || '—');
+            $("#modalCustomerCheckin").text(customerMapData.checkinDate || '—');
+            $("#modalCustomerCheckout").text(customerMapData.checkoutDate || '—');
+            $("#modalCustomerPhone").text(customerMapData.phone || '—');
+            $("#modalCustomerPersonCount").text(customerMapData.person || '—');
+            $("#modalCustomerArrivedAmount").text(formatMoney(customerMapData.arrivedAmount, customerMapData.arrivedAmountCurrency));
+            $("#modalCustomerRemainingAmount").text(formatMoney(customerMapData.remainingAmount, customerMapData.remainingAmountCurrency, "لا يوجد"));
+            $("#modalCustomerNightPrice").text(formatMoney(customerMapData.sellinPrice, customerMapData.currency));
+
+            var totalEuro = dayCount * (customerMapData.roomCount || 1) * (customerMapData.sellinEuroPrice || 0);
+            $("#modalCustomerTotalPrice").text(totalEuro ? `${totalEuro} €` : '—');
+
+            $("#modalCustomerPhone, #modalCustomerPersonCount, #modalCustomerArrivedAmount, #modalCustomerRemainingAmount, #modalCustomerNightPrice, #modalCustomerTotalPrice")
+              .css({ "direction": "ltr", "unicode-bidi": "embed", "text-align": "left" });
+
+            $("#customerModal").addClass('show');
+          })
+          .withFailureHandler(function (err) {
+            console.error('Error loading reservation details', err);
+            Swal.fire('خطأ', 'تعذر تحميل تفاصيل الحجز', 'error');
+          })
+          .getCustomerMapData(rowId);
+      }
 
   });
 
   function printReservationMessage(count){
-
-    if(count === 1)
-      return "حجز واحد";
-    if(count === 2)
-      return "حجزين";
-    if(count > 2)
-      return count + ' حجوزات';
-    
-    return "لايوجد حجوزات";
-  }
-  function navigateTo(pageName, customerId = "") {
-    console.log(`Navigating to ${pageName} with customerId: ${customerId}`);
-    var url = document.getElementById("url").value;
-    var link = document.createElement('a');
-
-    // Construct the URL based on the page name and optional customerId
-    if (pageName === 'index') {ش
-      link.href = url;
-    } else if (pageName === 'edit-reservation' && customerId) {
-      link.href = `${url}?page=${pageName}&customerId=${customerId}`;
-    } else {
-      link.href = `${url}?page=${pageName}`;
+      if(count === 1)
+        return "حجز واحد";
+      if(count === 2)
+        return "حجزين";
+      if(count > 2)
+        return `إجمالي ${count} حجوزات`;
+      return "لا يوجد حجوزات";
     }
+    function navigateTo(pageName, customerId = "") {
+      var url = document.getElementById("url").value;
+      var link = document.createElement('a');
 
-    link.id = 'linkURL';
-    document.body.appendChild(link);
-    document.getElementById("linkURL").click();
-  }
+      if (pageName === 'index') {
+        link.href = url;
+      } else if (pageName === 'edit-reservation' && customerId) {
+        link.href = `${url}?page=${pageName}&customerId=${customerId}`;
+      } else {
+        link.href = `${url}?page=${pageName}`;
+      }
+
+      link.id = 'linkURL';
+      document.body.appendChild(link);
+      document.getElementById("linkURL").click();
+      document.body.removeChild(link);
+    }
 
 </script>
 

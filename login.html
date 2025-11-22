@@ -27,15 +27,26 @@
 </head>
 <body>
   
-  <div class="card login-card">
+    <div class="card login-card">
     <div class="card-body">
       <h3 class="card-title text-center mb-4">تسجيل الدخول</h3>
-      <div id="error-message" class="mb-3">كلمة المرور غير صحيحة</div>
-      
-      <div class="mb-3">
-        <label for="password" class="form-label">كلمة المرور</label>
-        <input type="password" class="form-control" id="password">
-      </div>
+        <div id="error-message" class="mb-3">بيانات الدخول غير صحيحة</div>
+
+        <div class="mb-3">
+          <label for="email" class="form-label">البريد الإلكتروني</label>
+          <input type="email" class="form-control" id="email" placeholder="name@example.com">
+        </div>
+        <div class="mb-3">
+          <label for="role" class="form-label">نوع الصلاحية</label>
+          <select class="form-select" id="role">
+            <option value="">اختر الدور</option>
+            <option value="employee">موظف</option>
+            <option value="admin">إدارة</option>
+            <option value="owner">مالك</option>
+            <option value="developer">مطوّر</option>
+            <option value="accountant">محاسب</option>
+          </select>
+        </div>
       <button id="loginButton" class="btn btn-primary w-100">دخول</button>
     </div>
   </div>
@@ -43,9 +54,14 @@
   <script>
     const APP_URL = '<?= appUrl ?>';
 
-  document.getElementById("loginButton").addEventListener("click", function() {
-    var pass = document.getElementById("password").value;
-    if (!pass) return;
+    document.getElementById("loginButton").addEventListener("click", function() {
+      var email = document.getElementById("email").value.trim();
+      var role = document.getElementById("role").value;
+      if (!email || !role) {
+        document.getElementById("error-message").textContent = "يرجى إدخال البريد الإلكتروني وتحديد الدور";
+        document.getElementById("error-message").style.display = "block";
+        return;
+      }
 
     var loginBtn = this;
     loginBtn.disabled = true;
@@ -60,7 +76,8 @@
           return;
         }
 
-        document.getElementById("error-message").style.display = "block";
+          document.getElementById("error-message").textContent = (response && response.message) || "تعذر التحقق من البيانات";
+          document.getElementById("error-message").style.display = "block";
         loginBtn.disabled = false;
         loginBtn.innerText = "دخول";
       })
@@ -69,7 +86,7 @@
         loginBtn.disabled = false;
         loginBtn.innerText = "دخول";
       })
-      .doLogin(pass);
+        .doLogin(email, role);
   });
   </script>
 </body>
