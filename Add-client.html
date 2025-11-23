@@ -358,43 +358,57 @@
       submitText.classList.toggle('d-none', isLoading);
     }
 
-    function loadSelectOptions() {
-      google.script.run
-        .withSuccessHandler(function (data) {
-          populateSelect(nationalitySelect, data || [], 'اختر الجنسية');
-        })
-        .getColumnByName('NATIONALITY');
+  function loadSelectOptions() {
+    google.script.run
+      .withSuccessHandler(function (data) {
+        const nationalities = Array.isArray(data && data.nationalities)
+          ? data.nationalities.filter(Boolean)
+          : [];
+        const cities = normalizeCityList(data && data.cities);
+        populateSelect(nationalitySelect, nationalities, 'اختر الجنسية');
+        populateSelect(citySelect, cities, 'اختر المدينة');
+      })
+      .withFailureHandler(function (error) {
+        console.error(error);
+        Swal.fire({
+          title: 'تنبيه',
+          text: 'تعذر تحميل القوائم المنسدلة. يرجى تحديث الصفحة.',
+          icon: 'error',
+          confirmButtonText: 'حسناً'
+        });
+      })
+      .getClientFormLookups();
+  }
 
-      google.script.run
-        .withSuccessHandler(function (data) {
-          const cities = Array.isArray(data)
-            ? data.map(row => Array.isArray(row) ? row[0] : row).filter(Boolean)
-            : [];
-          populateSelect(citySelect, cities, 'اختر المدينة');
-        })
-        .getCity();
+  function populateSelect(selectElement, items, placeholder) {
+    const fragment = document.createDocumentFragment();
+    const placeholderOption = document.createElement('option');
+    placeholderOption.value = '';
+    placeholderOption.textContent = placeholder;
+    placeholderOption.disabled = true;
+    placeholderOption.selected = true;
+    fragment.appendChild(placeholderOption);
+
+    items.forEach(item => {
+      if (!item) return;
+      const option = document.createElement('option');
+      option.value = item;
+      option.textContent = item;
+      fragment.appendChild(option);
+    });
+
+    selectElement.innerHTML = '';
+    selectElement.appendChild(fragment);
+  }
+
+  function normalizeCityList(list) {
+    if (!Array.isArray(list)) {
+      return [];
     }
-
-    function populateSelect(selectElement, items, placeholder) {
-      const fragment = document.createDocumentFragment();
-      const placeholderOption = document.createElement('option');
-      placeholderOption.value = '';
-      placeholderOption.textContent = placeholder;
-      placeholderOption.disabled = true;
-      placeholderOption.selected = true;
-      fragment.appendChild(placeholderOption);
-
-      items.forEach(item => {
-        if (!item) return;
-        const option = document.createElement('option');
-        option.value = item;
-        option.textContent = item;
-        fragment.appendChild(option);
-      });
-
-      selectElement.innerHTML = '';
-      selectElement.appendChild(fragment);
-    }
+    return list
+      .map(item => Array.isArray(item) ? item[0] : item)
+      .filter(Boolean);
+  }
   </script>
 </body>
 </html>
