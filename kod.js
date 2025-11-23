@@ -11,7 +11,6 @@ var cache = CacheService.getScriptCache();
 
 // مدة التخزين بالثواني (3600 = 1 ساعة)
 var CACHE_DURATION = 3600; 
-var SESSION_DURATION = 3600; // مدة بقاء المستخدم مسجلاً
 
 // مفاتيح الكاش (لتنظيمها)
 var KEY_SUPPLIERS = 'suppliers_data';
@@ -19,7 +18,6 @@ var KEY_CLIENTS = 'clients_data';
 var KEY_CITIES = 'city_data';
 var KEY_HOTELS = 'hotels_data';
 var KEY_RESERVATIONS = 'reservations_data';
-var KEY_USER_ROLE = 'user_role'; // كاش خاص بجلسة المستخدم
 var USERS_SHEET_NAME = 'USERS';
 var PAGE_SIZE = 20;
 
@@ -42,6 +40,105 @@ var DEFAULT_REDIRECT = {
   developer: 'manage-statistics',
   accountant: 'manage-statistics'
 };
+
+function getActiveUserEmail() {
+  try {
+    var email = Session.getActiveUser().getEmail();
+    return (email || '').toString().trim().toLowerCase();
+  } catch (err) {
+    Logger.log('تعذر الحصول على البريد الإلكتروني النشط: ' + err);
+    return '';
+  }
+}
+
+function resolveAuthorizedUser() {
+  var email = getActiveUserEmail();
+  if (!email) {
+    return { status: 'unauthenticated' };
+  }
+  var userRecord = findUserByEmail(email);
+  if (!userRecord || !userRecord.role) {
+    return { status: 'unauthorized', email: email };
+  }
+  return { status: 'authorized', user: userRecord };
+}
+
+function renderStatusPage(title, message, options) {
+  options = options || {};
+  var subMessage = options.subMessage || '';
+  var actionHtml = options.actionHtml || '';
+  var html =
+    '<!DOCTYPE html>' +
+    '<html lang="ar" dir="rtl">' +
+    '<head>' +
+      '<meta charset="utf-8">' +
+      '<meta name="viewport" content="width=device-width, initial-scale=1">' +
+      '<style>' +
+        'body{font-family:"Cairo","Tahoma",sans-serif;background:#f4f6f8;margin:0;padding:40px;}' +
+        '.card{max-width:520px;margin:0 auto;background:#fff;border-radius:18px;padding:32px;text-align:center;box-shadow:0 20px 45px rgba(0,0,0,0.08);}' +
+        'h1{margin:0 0 12px;color:#008891;font-size:1.6rem;}' +
+        'p{color:#4a4a4a;line-height:1.8;margin:0 0 16px;font-size:1rem;}' +
+        '.actions{margin-top:20px;display:flex;gap:12px;flex-wrap:wrap;justify-content:center;}' +
+        '.btn{display:inline-block;padding:10px 20px;border-radius:10px;text-decoration:none;font-weight:600;background:#008891;color:#fff;}' +
+        '.btn.secondary{background:#e8f4f5;color:#006d75;}' +
+      '</style>' +
+    '</head>' +
+    '<body>' +
+      '<div class="card">' +
+        '<h1>' + title + '</h1>' +
+        '<p>' + message + '</p>' +
+        (subMessage ? '<p style="font-size:0.9rem;color:#6c757d;margin-top:0;">' + subMessage + '</p>' : '') +
+        (actionHtml ? '<div class="actions">' + actionHtml + '</div>' : '') +
+      '</div>' +
+    '</body>' +
+    '</html>';
+  return HtmlService.createHtmlOutput(html).setTitle(title);
+}
+
+function renderAuthRequiredPage() {
+  var appUrl = ScriptApp.getService().getUrl();
+  var actions =
+    '<a class="btn" href="https://accounts.google.com/ServiceLogin" target="_top">تسجيل الدخول</a>' +
+    '<a class="btn secondary" href="' + appUrl + '">تحديث الصفحة</a>';
+  return renderStatusPage(
+    'يرجى تسجيل الدخول',
+    'يجب تسجيل الدخول بحساب Google للوصول إلى النظام.',
+    {
+      subMessage: 'بعد تسجيل الدخول أعد فتح الرابط أو استخدم زر تحديث الصفحة.',
+      actionHtml: actions
+    }
+  );
+}
+
+function renderUnauthorizedPage(email) {
+  var appUrl = ScriptApp.getService().getUrl();
+  var actions =
+    '<a class="btn" href="' + appUrl + '" target="_top">المحاولة مجدداً</a>';
+  var message = 'الحساب ' + (email || 'الحالي') + ' غير موجود في ورقة USERS.';
+  return renderStatusPage(
+    'غير مصرح لك بالدخول',
+    message,
+    {
+      subMessage: 'تواصل مع الإدارة لإضافة بريدك الإلكتروني إلى قائمة الصلاحيات.',
+      actionHtml: actions
+    }
+  );
+}
+
+function renderLogoutPage(user) {
+  var baseUrl = ScriptApp.getService().getUrl();
+  var actions =
+    '<a class="btn" href="' + baseUrl + '">العودة للنظام</a>' +
+    '<a class="btn secondary" href="https://accounts.google.com/Logout" target="_top">تسجيل الخروج من Google</a>';
+  return renderStatusPage(
+    'تم تسجيل الخروج',
+    'يمكنك إغلاق هذه الصفحة أو العودة فوراً للنظام. لتسجيل خروج كامل يرجى تسجيل الخروج من حساب Google.',
+    {
+      subMessage: user && user.email ? ('المستخدم: ' + user.email) : '',
+      actionHtml: actions
+    }
+  );
+}
 
 // -----------------------------------------------------------------
 // 🔒 دوال الأمان وتسجيل الدخول
@@ -98,143 +195,37 @@ function findUserByEmail(email) {
   return null;
 }
 
-function persistSession(sessionPayload) {
-  cache.put(KEY_USER_ROLE, JSON.stringify(sessionPayload), SESSION_DURATION);
-}
-
-/**
- * [تعمل داخلياً]
- * تتحقق من الكاش لمعرفة إذا كان المستخدم لديه جلسة صالحة.
- * @returns {Object|null} كائن يحتوي على {email, role, name}.
- */
-function checkAuthStatus() {
-  var session = cache.get(KEY_USER_ROLE);
-  if (!session) {
-    return null;
-  }
-  try {
-    var parsed = JSON.parse(session);
-    if (!parsed || !parsed.email || !parsed.role) {
-      return null;
-    }
-    return parsed;
-  } catch (err) {
-    Logger.log('فشل تفريغ الجلسة: ' + err);
-    return null;
-  }
-}
-
-/**
- * [تُستدعى من login.html]
- * تتحقق من البريد الإلكتروني والدور مقابل ورقة USERS وتخزن الجلسة.
- * @param {string} email البريد الإلكتروني الذي أدخله المستخدم.
- * @param {string} role الدور المطلوب.
- * @returns {{success:boolean, role:string|null, redirect:string|undefined, message:string|undefined}}
- */
-function doLogin(email, role) {
-  var sanitizedEmail = (email || '').toString().trim().toLowerCase();
-  var requestedRole = normalizeRole(role);
-
-  if (!sanitizedEmail || !requestedRole) {
-    return { success: false, role: null, message: 'يرجى إدخال البريد الإلكتروني والدور' };
-  }
-
-  var userRecord = findUserByEmail(sanitizedEmail);
-  if (!userRecord) {
-    return { success: false, role: null, message: 'البريد الإلكتروني غير مسجل' };
-  }
-
-  if (!userRecord.role) {
-    return { success: false, role: null, message: 'لا يوجد دور مرتبط بهذا المستخدم' };
-  }
-
-  if (userRecord.role !== requestedRole) {
-    return { success: false, role: null, message: 'الدور المحدد غير مطابق للسجلات' };
-  }
-
-  var sessionPayload = {
-    email: userRecord.email,
-    role: userRecord.role,
-    name: userRecord.name || ''
-  };
-
-  persistSession(sessionPayload);
-
-  return {
-    success: true,
-    role: userRecord.role,
-    redirect: getDefaultPageForRole(userRecord.role),
-    userName: userRecord.name || ''
-  };
-}
-
-/**
- * [تُستدعى من الرابط ?page=logout]
- * تقوم بمسح جلسة المستخدم من الكاش وإعادة توجيهه لصفحة الدخول.
- * @returns {HtmlOutput} صفحة HTML تقوم بإعادة التوجيه.
- */
-function doLogout() {
-  var cache = CacheService.getScriptCache();
-  cache.remove(KEY_USER_ROLE);
-  Logger.log("تم تسجيل الخروج ومسح الجلسة");
-  
-  // إعادة توجيه المستخدم لصفحة الدخول
-  var redirectUrl = ScriptApp.getService().getUrl() + '?page=login';
-  return HtmlService.createHtmlOutput(
-    '<script>window.top.location.href = "' + redirectUrl + '";</script>'
-  );
-}
-
 // -----------------------------------------------------------------
 // 🖥️ دوال عرض الواجهة (HTML) - حارس البوابة
 // -----------------------------------------------------------------
 
 
 function doGet(e) {
-  var session = checkAuthStatus();
-  if (session) {
-    try {
-      var latestRecord = findUserByEmail(session.email);
-      if (!latestRecord || !latestRecord.role) {
-        cache.remove(KEY_USER_ROLE);
-        session = null;
-      } else if (latestRecord.role !== session.role) {
-        session = {
-          email: latestRecord.email,
-          role: latestRecord.role,
-          name: latestRecord.name || ''
-        };
-        persistSession(session);
-      }
-    } catch (validationError) {
-      Logger.log('تعذر تحديث بيانات الجلسة: ' + validationError);
-    }
+  var authState = resolveAuthorizedUser();
+
+  if (authState.status === 'unauthenticated') {
+    return renderAuthRequiredPage();
   }
 
-  var userRole = session ? session.role : null;
-  var userEmail = session ? session.email : '';
-  var userName = session ? session.name : '';
-  var requestedPage = (e && e.parameter && e.parameter.page) ? e.parameter.page : 'login';
-  var page = requestedPage.toString();
-
-  if (!session) {
-    if (page === 'login') {
-      return HtmlService.createTemplateFromFile('login')
-        .evaluate()
-        .setTitle("Login");
-    }
-    var loginUrl = ScriptApp.getService().getUrl() + '?page=login';
-    return HtmlService.createHtmlOutput(
-      '<script>window.top.location.href = "' + loginUrl + '";</script>'
-    );
+  if (authState.status === 'unauthorized') {
+    return renderUnauthorizedPage(authState.email);
   }
 
-  if (page === 'logout') {
-    return doLogout();
-  }
+  var user = authState.user;
+  var userRole = user.role || '';
+  var userEmail = user.email || '';
+  var userName = user.name || '';
+  var requestedPage = (e && e.parameter && e.parameter.page)
+    ? e.parameter.page.toString()
+    : '';
+  var page = requestedPage || getDefaultPageForRole(userRole);
 
   if (page === 'login') {
     page = getDefaultPageForRole(userRole);
+  }
+
+  if (page === 'logout') {
+    return renderLogoutPage(user);
   }
 
   if (!isPageAllowedForRole(page, userRole)) {
@@ -246,9 +237,9 @@ function doGet(e) {
   }
 
   var template = HtmlService.createTemplateFromFile(page);
-  template.userRole = userRole || '';
-  template.userEmail = userEmail || '';
-  template.userName = userName || '';
+  template.userRole = userRole;
+  template.userEmail = userEmail;
+  template.userName = userName;
   
   return template.evaluate()
     .setTitle("Reservation")
@@ -355,6 +346,45 @@ function getHotelsByCity(city) {
   });
   
   return filteredHotels;
+}
+
+/**
+ * إرجاع خيارات نماذج إضافة العملاء (مدن + جنسيات).
+ * @returns {{nationalities:Array, cities:Array}}
+ */
+function getClientFormLookups() {
+  var response = {
+    nationalities: [],
+    cities: []
+  };
+
+  try {
+    response.nationalities = getColumnByName('NATIONALITY') || [];
+  } catch (err) {
+    Logger.log('تعذر تحميل قائمة الجنسيات: ' + err);
+  }
+
+  try {
+    response.cities = getCity() || [];
+  } catch (cityErr) {
+    Logger.log('تعذر تحميل قائمة المدن: ' + cityErr);
+  }
+
+  return response;
+}
+
+/**
+ * إرجاع خيارات نموذج إضافة الفنادق (مدن متاحة).
+ * @returns {{cities:Array}}
+ */
+function getHotelFormLookups() {
+  var response = { cities: [] };
+  try {
+    response.cities = getCity() || [];
+  } catch (err) {
+    Logger.log('تعذر تحميل مدن الفنادق: ' + err);
+  }
+  return response;
 }
 
 /**

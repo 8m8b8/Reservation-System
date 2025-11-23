@@ -1,93 +1,51 @@
 <!DOCTYPE html>
-<html>
+<html lang="ar" dir="rtl">
 <head>
   <? var appUrl = getUrl(); ?>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <base target="_top">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     body {
+      min-height: 100vh;
+      background: #f4f6f8;
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 100vh;
-      background-color: #f8f9fa;
+      font-family: 'Cairo', sans-serif;
     }
-    .login-card {
-      width: 100%;
-      max-width: 400px;
-      padding: 25px;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    .auto-auth-card {
+      background: #fff;
+      border-radius: 18px;
+      padding: 32px;
+      max-width: 460px;
+      text-align: center;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.08);
     }
-    #error-message {
-      display: none;
-      color: red;
+    h1 {
+      font-size: 1.6rem;
+      color: #008891;
+      margin-bottom: 12px;
+    }
+    p {
+      color: #4a4a4a;
+      line-height: 1.8;
     }
   </style>
 </head>
 <body>
-  
-    <div class="card login-card">
-    <div class="card-body">
-      <h3 class="card-title text-center mb-4">تسجيل الدخول</h3>
-        <div id="error-message" class="mb-3">بيانات الدخول غير صحيحة</div>
-
-        <div class="mb-3">
-          <label for="email" class="form-label">البريد الإلكتروني</label>
-          <input type="email" class="form-control" id="email" placeholder="name@example.com">
-        </div>
-        <div class="mb-3">
-          <label for="role" class="form-label">نوع الصلاحية</label>
-          <select class="form-select" id="role">
-            <option value="">اختر الدور</option>
-            <option value="employee">موظف</option>
-            <option value="admin">إدارة</option>
-            <option value="owner">مالك</option>
-            <option value="developer">مطوّر</option>
-            <option value="accountant">محاسب</option>
-          </select>
-        </div>
-      <button id="loginButton" class="btn btn-primary w-100">دخول</button>
-    </div>
+  <div class="auto-auth-card">
+    <h1>تم تفعيل الدخول التلقائي</h1>
+    <p>
+      لا حاجة لإدخال البريد الإلكتروني أو اختيار الدور. النظام يتعرف عليك مباشرة من حساب Google.
+    </p>
+    <a class="btn btn-primary mt-3" href="<?= appUrl ?>">الانتقال للواجهة الآن</a>
   </div>
-
   <script>
-    const APP_URL = '<?= appUrl ?>';
-
-    document.getElementById("loginButton").addEventListener("click", function() {
-      var email = document.getElementById("email").value.trim();
-      var role = document.getElementById("role").value;
-      if (!email || !role) {
-        document.getElementById("error-message").textContent = "يرجى إدخال البريد الإلكتروني وتحديد الدور";
-        document.getElementById("error-message").style.display = "block";
-        return;
-      }
-
-    var loginBtn = this;
-    loginBtn.disabled = true;
-    loginBtn.innerText = "جارٍ التحقق...";
-    document.getElementById("error-message").style.display = "none";
-    
-    google.script.run
-      .withSuccessHandler(function(response) {
-        if (response && response.success) {
-          var targetPage = response.redirect || (response.role === 'admin' ? 'manage-statistics' : 'index');
-          window.location.href = APP_URL + '?page=' + targetPage;
-          return;
-        }
-
-          document.getElementById("error-message").textContent = (response && response.message) || "تعذر التحقق من البيانات";
-          document.getElementById("error-message").style.display = "block";
-        loginBtn.disabled = false;
-        loginBtn.innerText = "دخول";
-      })
-      .withFailureHandler(function(err) {
-        alert(err.message);
-        loginBtn.disabled = false;
-        loginBtn.innerText = "دخول";
-      })
-        .doLogin(email, role);
-  });
+    setTimeout(function () {
+      window.top.location.href = '<?= appUrl ?>';
+    }, 1200);
   </script>
 </body>
 </html>
